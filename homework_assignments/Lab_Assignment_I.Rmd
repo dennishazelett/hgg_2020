@@ -1,0 +1,64 @@
+---
+title: "Lab Assignment I: Install GENAVi"
+date: "due May 7, 2020"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Doing this lab assignment
+
+You can do this assignment in one of two ways. 1. You may type commands from the html version of this document into an R console and refer to the exercises or 2. you can open the markdown in Rstudio and enter commands interactively. With this latter option you may edit the header with your personal information, annotate the rest of the file with notes and reminders, and enter your answers to questions on the .Rmd file for safe keeping of your notes. **compiled Rmarkdown is an acceptable format to hand in homework.**
+
+## Installing R
+
+[Detailed instructions for all platforms](https://cran.R-project.org). This notebook was composed with R version 3.6.3.
+
+## Installing GENAVi
+
+Prerequisites: Any platform (typically mac, windows or linux), R, Rstudio, and bioconductor.
+
+### Install Bioconductor
+
+If you haven't done so already, install bioconductor. Because GENAVi will attempt to install a bunch of dependencies when you first run the app, let's pre-install those packages so we can troubleshoot this step seperately. Uncomment any of the following lines you need to run. If you have any difficulty, ask a course instructor for assistance.
+
+```{r installation, echo=TRUE, results='hide'}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install(version = "3.10")
+
+# pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph')
+
+# BiocManager::install(pkgs, ask = FALSE, checkBuilt = TRUE)
+```
+
+For further information or instructions on updating and upgrading bioconductor packages see [Bioconductor website](https://bioconductor.org/install)
+
+### Run GENAVi
+
+Shiny is available as an [installable R package via GitHub](https://github.com/alpreyes/GENAVi). It is not necessary to know how to use git for this excercise, but it is strongly encouraged for you to learn github on your own if you plan to use bioinformatics analysis for your thesis work.
+
+```{r run-genavi, echo=TRUE, results='hide'}
+# shiny::runGitHub("alpreyes/GENAVi")
+```
+
+### Running the GENAVi Docker image
+
+Instructions...
+
+### Alternative GENAVi B
+
+The Center for Bioinformatics also hosts GENAVi via website [shinyapps.io/GENAVi](https://www.shinyapps.io/GENAVi). While not as fast or reliable overall as the standalone version, you can use this in a pinch if you're having difficulty setting up.
+
+## Exercises
+
+### 1. Tutorial
+If you wish, explore the tutorial that comes with the GENAVi package.
+
+### 2. Create a dataset
+Using R, excel, or any tool of your choosing. Create a dataset consisting of your favorite TF knockdown and appropriate control samples.
+
+### 3. Load your dataset
+Import your newly created dataset into GENAVi.
