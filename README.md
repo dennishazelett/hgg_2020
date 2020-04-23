@@ -1,5 +1,4 @@
-Course Abstract
----------------
+## Course Abstract
 
 The goal of this course is to take students on an in-depth tour of a
 single common bioinformatics analysis pipeline. We will deconstruct the
@@ -12,8 +11,7 @@ steps. We will emphasize practical utility of the methods, plus exposure
 to important ideas and concepts for students to explore on their own at
 a later date.
 
-Course Format
--------------
+## Course Format
 
 The course takes place over 6 weeks with 1.5 hour lectures on Tuesdays
 and practical workshops on Thursdays for a total of 12 lectures and
@@ -26,8 +24,7 @@ recapitulate it with a future dataset if needed.
 Due to social distancing protocols the course will take place online via
 a password-locked Zoom session. Details to be distributed via email.
 
-Expectations: Attendance, Homework & Grading
---------------------------------------------
+## Expectations: Attendance, Homework & Grading
 
 The course is worth 100 points. Homework is expected to be turned in on
 time. Late assignments will be given a maximum of 50% of full credit up
@@ -124,7 +121,7 @@ assignment and any challenges encountered (worth 10 points).
 ### Schedule and Due Dates:
 
 | day | date  | lecture   | hmwk | due  |
-|:----|:------|:----------|:-----|:-----|
+| :-- | :---- | :-------- | :--- | :--- |
 | Tue | 05/05 | Intro     | LI   |      |
 | Thu | 05/07 | DGE       | LII  | LI   |
 | Tue | 05/12 | Wkshp     |      | LII  |
@@ -138,8 +135,11 @@ assignment and any challenges encountered (worth 10 points).
 | Tue | 06/09 | Review    |      | QSVI |
 | Thu | 06/11 | Exam      |      | EI   |
 
-Course Materials
-----------------
+**Course schedule and outline.** Roman numerals are preceded by ‘L’ for
+labs, ‘QS’ for question sets and ‘E’ for exams. Optional times for oral
+presentation are during workshops.
+
+## Course Materials
 
 All course materials, including this syllabus, lab workflows, question
 sets, and lecture slides are available online through the graduate
