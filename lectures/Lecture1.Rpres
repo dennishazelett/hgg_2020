@@ -113,6 +113,18 @@ Oral Presentations
 - volunteer on the day of; 3 opportunities 5/12, 5/19, 5/26
 - 2 to 3 people during each workshop
 
+Course Materials
+========================================================
+* All course materials available via:
+* GitHub: dennishazelett/hgg_2020
+* Box: Bioinformatics2020 (just a copy of the working tree in the git repo)
+
+Includes:
+- lecture slides
+- homework & question sets
+- all code
+- reading assignments
+
 Let's look at some data
 ========================================================
 ```{r unique-tfs, echo=TRUE}
