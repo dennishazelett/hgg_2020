@@ -55,7 +55,7 @@ Instructions...
 
 ### Alternative GENAVi B
 
-The Center for Bioinformatics also hosts GENAVi via website [shinyapps.io/GENAVi](https://www.shinyapps.io/GENAVi). While not as fast or reliable overall as the standalone version, you can use this in a pinch if you're having difficulty setting up.
+The Center for Bioinformatics also hosts GENAVi via website [junkdnalab.shinyapps.io/GENAVi](https://junkdnalab.shinyapps.io/GENAVi). While not as fast or reliable overall as the standalone version, you can use this in a pinch if you're having difficulty setting up.
 
 ## Exercises
 
@@ -85,7 +85,10 @@ In the GENAVi window that you should have opened up by now, you'll notice that t
 ```{r inspect-data, echo=TRUE}
 ## Let's open the metadata file
 setwd('~/repos/hgg_2020')
-metadat <- read.csv(file = '~/repos/hgg_2020/data/crispri_modelmatrix.csv', header = TRUE)
+metadat <- read.csv(
+  file = '~/repos/hgg_2020/data/crispri_modelmatrix.csv', 
+  header = TRUE,
+  stringsAsFactors = FALSE)
 
 ## Inspect the TEAD2 samples in the metadata file:
 knitr::kable(subset(metadat, treatment == 'TEAD2'))
@@ -114,25 +117,32 @@ tead.metadat <- rbind(
 tead.samples <- tead.metadat$samples
 
 ## Now we read in the data from feature counts file
-cts <- read.csv('~/repos/hgg_2020/data/combinedfeatcounts.csv', header = TRUE)
+cts <- read.csv(
+  '~/repos/hgg_2020/data/combinedfeatcounts.csv', 
+  header = TRUE,
+  stringsAsFactors = FALSE)
 ## Take a quick peak at the contents
 knitr::kable(cts[1:5, 1:4])
 
 ## We need to select the columns from our tead.samples, including the Geneid column:
 
-tead.counts <- subset(cts, select = c(1, tead.samples))
+tead.counts <- cts[, c("Geneid", tead.samples)]
 
 ## Now we're ready to export these object for upload to GENAVi
 write.table(
   tead.counts, 
   file = "~/repos/hgg_2020/data/teadfeatcounts.csv",
-  quote = FALSE
+  row.names = FALSE,
+  quote = FALSE,
+  sep = ','
 )
 
 write.table(
   tead.metadat,
   file = "~/repos/hgg_2020/data/teadmodel.csv",
-  quote = FALSE
+  row.names = FALSE,
+  quote = FALSE,
+  sep = ','
 )
 ```
 
