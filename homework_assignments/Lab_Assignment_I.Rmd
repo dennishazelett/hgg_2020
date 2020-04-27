@@ -27,7 +27,7 @@ Prerequisites: Any platform (typically mac, windows or linux), R, Rstudio, and b
 
 ### Install Bioconductor
 
-If you haven't done so already, install bioconductor. Because GENAVi will attempt to install a bunch of dependencies when you first run the app, let's pre-install those packages so we can troubleshoot this step seperately. Uncomment any of the following lines you need to run. If you have any difficulty, ask a course instructor for assistance.
+If you haven't done so already, install bioconductor. GENAVi will attempt to install a bunch of dependencies when you first run the app, so pre-install those packages so we can troubleshoot this step seperately. Uncomment any of the following lines you need to run. If you have any difficulty, ask a course instructor for assistance.
 
 ```{r installation, echo=TRUE, results='hide'}
 # if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -43,7 +43,7 @@ For further information or instructions on updating and upgrading bioconductor p
 
 ### Run GENAVi
 
-Shiny is available as an [installable R package via GitHub](https://github.com/alpreyes/GENAVi). It is not necessary to know how to use git for this excercise, but it is strongly encouraged for you to learn github on your own if you plan to use bioinformatics analysis for your thesis work.
+Shiny is available as an [installable R package via GitHub](https://github.com/alpreyes/GENAVi). It is not necessary to know how to use git for this excercise, but it is strongly encouraged for you to [learn github on your own](https://www.coursera.org/learn/version-control-with-git) if you plan to use bioinformatics analysis for your thesis work.
 
 ```{r run-genavi, echo=TRUE, results='hide'}
 # shiny::runGitHub("alpreyes/GENAVi")
@@ -51,16 +51,30 @@ Shiny is available as an [installable R package via GitHub](https://github.com/a
 
 ### Running the GENAVi Docker image
 
-Instructions...
+1. If needed, [Install Docker](https://docs.docker.com/docker-hub/)
 
-### Alternative GENAVi B
+2. After starting the Docker daemon, pull the GENAVi image by running at a terminal prompt (this takes several minutes with a good connection):
 
-The Center for Bioinformatics also hosts GENAVi via website [junkdnalab.shinyapps.io/GENAVi](https://junkdnalab.shinyapps.io/GENAVi). While not as fast or reliable overall as the standalone version, you can use this in a pinch if you're having difficulty setting up.
+```{sh pull-docker, echo=TRUE}
+# docker pull cedarscompbio/genavi
+```
+
+2. Run the [Docker image for GENAVi](https://hub.docker.com/r/cedarscompbio/genavi) by following the instructions on the image's web page.
+
+```{sh docker-image-start}
+# docker run --rm -p 3838:3838 cedarscompbio/genavi
+```
+
+Then visit the container with your favorite web browser at [localhost:3838/GENAVi/](http://localhost:3838/GENAVi).
+
+### Alternative GENAVi Platform
+
+The Center for Bioinformatics also hosts GENAVi via website [junkdnalab.shinyapps.io/GENAVi](https://junkdnalab.shinyapps.io/GENAVi).
 
 ## Exercises
 
 ### 1. Create a dataset
-Using R, excel, or any tool of your choosing. Create a dataset consisting of your favorite TF knockdown and appropriate control samples.
+You are going to create a dataset consisting of your favorite TF knockdown and appropriate control samples, and upload these datasets into GENAVi.
 
 #### Uploading data to GENAVi
 
@@ -121,7 +135,7 @@ cts <- read.csv(
   '~/repos/hgg_2020/data/combinedfeatcounts.csv', 
   header = TRUE,
   stringsAsFactors = FALSE)
-## Take a quick peak at the contents
+## Take a quick peek at the contents
 knitr::kable(cts[1:5, 1:4])
 
 ## We need to select the columns from our tead.samples, including the Geneid column:
