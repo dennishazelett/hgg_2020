@@ -74,10 +74,10 @@ sched <- data.frame(
   day = c("Tue", "Thu", "Tue", "Thu", "Tue", "Thu", "Tue", "Thu", "Tue", "Thu", "Tue", "Thu"),
   date = format(as.Date(c("2020-05-05", "2020-05-07", "2020-05-12", "2020-05-14", "2020-05-19", "2020-05-21", "2020-05-26", "2020-05-28", "2020-06-02", "2020-06-04", "2020-06-09", "2020-06-11")), "%m/%d"),
   lecture = c("Intro", "DGE", "Wkshp", "Expl Anls", "Review", "GO Anls", "Wkshp", "Formats", "Wkshp", "MultiQC", "Review", "Exam"),
-  hmwk = c("LI", "LII", "", "LIII", "", "LIV", "", "QSV", "", "QSVI", "", ""),
-  due = c("", "LI", "LII", "", "LIII", "", "LIV", "", "QSV", "", "QSVI", "EI")
+  hmwk = c("L1", "L2", "", "L3", "", "L4", "", "QS5", "", "QS6", "", ""),
+  due = c("", "L1", "L2", "", "L3", "", "L4", "", "QS5", "", "QS6", "E1")
 )
-knitr::kable(sched, caption = "**Course schedule and outline.** Roman numerals are preceded by 'L' for labs, 'QS' for question sets and 'E' for exams. Optional times for oral presentation are during workshops.")
+knitr::kable(sched, caption = "**Course schedule and outline.** Numbered assignments are preceded by 'L' for labs, 'QS' for question sets and 'E' for exams. Optional times for oral presentation are during workshops.")
 ```
 
 ## Course Materials
