@@ -3,6 +3,7 @@ Lecture 1 Course Overview & GENAVi
 author: Dennis Hazelett
 date: 5/5/2020
 autosize: true
+transition: fade
 ```{r setup, include=FALSE}
 opts_chunk$set(cache=TRUE)
 ```
@@ -153,7 +154,3 @@ Ordered TFs
 
 ![](ordered_crispri.png)
 
-Next
-========================================================
-
-Some more content
