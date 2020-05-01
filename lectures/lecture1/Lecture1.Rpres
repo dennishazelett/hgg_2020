@@ -1,4 +1,4 @@
-Lecture 1
+Lecture 1 Course Overview & GENAVi
 ========================================================
 author: Dennis Hazelett
 date: 5/5/2020
@@ -57,6 +57,18 @@ setwd('~/repos/hgg_2020/')
 replicate_model <- read.csv("data/modelmatrix.csv", row.names = 1, header = TRUE)
 replicate_model[1:15,]
 ```
+
+The Method
+========================================================
+
+Why GENAVi?
+- emphasize practical skills
+- de-emphasize programming skills
+
+"What if I am already a cloud-computing ML jockey?"
+- GENAVi not required
+- There is some value to learning GENAVi, _e.g._ teach DEA to non-computer savvy colleagues
+- Engage with course instructers on more interesting problems
 
 Attendance & Homework Expectations
 ========================================================
