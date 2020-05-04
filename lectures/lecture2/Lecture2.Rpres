@@ -3,6 +3,7 @@ Lecture 2 Differential Expression Analysis (DEA)
 author: Dennis Hazelett
 date: 5/7/2020
 autosize: true
+transition: fade
 ```{r setup, include=FALSE}
 opts_chunk$set(cache=TRUE)
 ```
