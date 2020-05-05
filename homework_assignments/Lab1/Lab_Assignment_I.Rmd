@@ -20,9 +20,7 @@ You can do this assignment in one of two ways. 1. You may type commands from the
 
 ## Installing R
 
-[Detailed instructions for all platforms](https://cran.R-project.org). This notebook was composed with R version 3.6.3.
-
-**Important Note: DO NOT INSTALL R version 4. Although it contains an official release, it contains a major flaw in that a previous default setting for a base package has been changed and is likely to break many dependent packages.**
+[Detailed instructions for all platforms](https://cran.R-project.org). This notebook was composed with R version 4.0.0.
 
 ## Installing GENAVi
 
@@ -35,9 +33,9 @@ If you haven't done so already, install bioconductor. GENAVi will attempt to ins
 ```{r installation, echo=TRUE, results='hide', eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
      install.packages("BiocManager")
-BiocManager::install(version = "3.10")
+BiocManager::install(version = "3.11")
 
-pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph')
+pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph', 'tidyverse', 'readr', 'shinyjs', 'org.Hs.eg.db', 'RUnit')
 
 BiocManager::install(pkgs, ask = FALSE, checkBuilt = TRUE)
 ```

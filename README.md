@@ -122,22 +122,20 @@ assignment and any challenges encountered (worth 10 points).
 
 | day | date  | lecture   | hmwk | due  |
 | :-- | :---- | :-------- | :--- | :--- |
-| Tue | 05/05 | Intro     | LI   |      |
-| Thu | 05/07 | DGE       | LII  | LI   |
-| Tue | 05/12 | Wkshp     |      | LII  |
-| Thu | 05/14 | Expl Anls | LIII |      |
-| Tue | 05/19 | Review    |      | LIII |
-| Thu | 05/21 | GO Anls   | LIV  |      |
-| Tue | 05/26 | Wkshp     |      | LIV  |
-| Thu | 05/28 | Formats   | QSV  |      |
-| Tue | 06/02 | Wkshp     |      | QSV  |
-| Thu | 06/04 | MultiQC   | QSVI |      |
-| Tue | 06/09 | Review    |      | QSVI |
-| Thu | 06/11 | Exam      |      | EI   |
+| Tue | 05/05 | Intro     | L1   |      |
+| Thu | 05/07 | DGE       | L2   | L2   |
+| Tue | 05/12 | Wkshp     |      | L2   |
+| Thu | 05/14 | Expl Anls | L3   |      |
+| Tue | 05/19 | Review    |      | L3   |
+| Thu | 05/21 | GO Anls   | L4   |      |
+| Tue | 05/26 | Wkshp     |      | L4   |
+| Thu | 05/28 | Formats   | QS5  |      |
+| Tue | 06/02 | Wkshp     |      | QS5  |
+| Thu | 06/04 | MultiQC   | QS6  |      |
+| Tue | 06/09 | Review    |      | QS6  |
+| Thu | 06/11 | Exam      |      | E1   |
 
-**Course schedule and outline.** Roman numerals are preceded by ‘L’ for
-labs, ‘QS’ for question sets and ‘E’ for exams. Optional times for oral
-presentation are during workshops.
+**Course schedule and outline.** Numbered assignments are preceded by ‘L’ for labs, ‘QS’ for question sets and ‘E’ for exams. Optional times for oral presentation are during workshops.
 
 ## Course Materials
 
