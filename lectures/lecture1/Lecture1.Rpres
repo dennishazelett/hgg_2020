@@ -43,7 +43,7 @@ ENCODE PROJECT (Michael Snyder's lab)
 ```{r, echo=FALSE}
 setwd('~/repos/hgg_2020/')
 cfc <- read.csv("data/combinedfeatcounts.csv", row.names = 1, header = TRUE)
-replicate_model <- read.csv("data/modelmatrix.csv", row.names = 1, header = TRUE)
+replicate_model <- read.csv("data/crispri_modelmatrix.csv", row.names = 1, header = TRUE)
 cfc[1:15, 1:4]
 ```
 
@@ -58,7 +58,7 @@ ENCODE PROJECT (Michael Snyder's lab)
 
 ```{r, echo=FALSE}
 setwd('~/repos/hgg_2020/')
-replicate_model <- read.csv("data/modelmatrix.csv", row.names = 1, header = TRUE)
+replicate_model <- read.csv("data/crispri_modelmatrix.csv", row.names = 1, header = TRUE)
 replicate_model[1:15,]
 ```
 
@@ -150,11 +150,13 @@ unique(replicate_model$treatment)
 Global overview
 ========================================================
 
-```{r clustered-crispri}
+```{r clustered-crispri, echo=FALSE}
+setwd('~/repos/hgg_2020/')
 # create the data set
-cfc_de <- DESeqDataSetFromMatrix(countData = cfc[, rownames(replicate_model)],
-                                 colData = replicate_model, 
-                                 design = ~treatment)
+cfc_de <- DESeqDataSetFromMatrix(
+  countData = cfc[, rownames(replicate_model)],
+  colData = replicate_model, 
+  design = ~treatment)
 # calculate scale factor for samples
 cfc_de <- estimateSizeFactors(cfc_de)
 # calculate log counts - variance stabilizing transformation 

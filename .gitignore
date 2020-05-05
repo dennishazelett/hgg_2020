@@ -7,8 +7,8 @@ data
 *.pdf
 *.log
 *.texLecture1-cache
-Lecture1-figure
-Lecture1-cache
+Lecture1-figure/
+Lecture1-cache/
 Lecture1.html
 Lecture1.md
 clustered_crispri.png
@@ -16,6 +16,12 @@ ordered_crispri.png
 Lab_Assignment_I.html
 Lab_Assignment_I.log
 Lab_Assignment_I.nb.html
-Lecture1-cache
 *.png
-lectures/lecture2/Lecture2.md
+Lecture2.md
+Lecture2.html
+Lecture2-figure/
+Lecture2-cache/
+Lab_Assignment_2.html
+Lab_Assignment_2.log
+Lab_Assignment_nb.html
+*.Rproj
