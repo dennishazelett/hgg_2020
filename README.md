@@ -22,7 +22,7 @@ recapitulate it with a future dataset if needed.
 ### Special considerations for COVID-19
 
 Due to social distancing protocols the course will take place online via
-a password-locked Zoom session. Details to be distributed via email.
+a password-locked WebEx session. Details to be distributed via email.
 
 ## Expectations: Attendance, Homework & Grading
 
