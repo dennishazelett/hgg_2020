@@ -6,6 +6,9 @@ autosize: true
 transition: fade
 ```{r setup, include=FALSE}
 opts_chunk$set(cache=TRUE)
+library(DESeq2)
+library(pheatmap)
+library(viridis)
 ```
 
 Introduction
@@ -147,10 +150,40 @@ unique(replicate_model$treatment)
 Global overview
 ========================================================
 
-![](clustered_crispri.png)
+```{r clustered-crispri}
+# create the data set
+cfc_de <- DESeqDataSetFromMatrix(countData = cfc[, rownames(replicate_model)],
+                                 colData = replicate_model, 
+                                 design = ~treatment)
+# calculate scale factor for samples
+cfc_de <- estimateSizeFactors(cfc_de)
+# calculate log counts - variance stabilizing transformation 
+cfc_de_vsd <- vst(cfc_de)
+# only look at genes that have been knocked down
+plot_matrix <- assay(cfc_de_vsd)[names(cfc_de_vsd) %in% replicate_model$crispri_geneid,]
+colnames(plot_matrix) <- replicate_model[colnames(plot_matrix), ]$treatment
+rownames(plot_matrix) <- replicate_model[match(rownames(plot_matrix), replicate_model$crispri_geneid), ]$treatment
+plot_matrix[1:10, 1:10]
+```
+
+Global overview plot
+========================================================
+
+```{r clustered-crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center'}
+pheatmap(plot_matrix, 
+         color = viridis(100), 
+         clustering_distance_cols = "correlation",
+         clustering_distance_rows = "euclidean",
+         scale = "row")
+```
 
 Ordered TFs
 ========================================================
 
-![](ordered_crispri.png)
-
+```{r ordered_crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center'}
+pheatmap(plot_matrix[order(match(rownames(plot_matrix), colnames(plot_matrix))), ], 
+         color = viridis(100), 
+         cluster_rows = FALSE,
+         cluster_cols = FALSE,
+         scale = "row")
+```
