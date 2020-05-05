@@ -1,0 +1,71 @@
+---
+title: 'Lab Assignment II: DEA with GENAVi'
+output: 
+  html_document:
+    df_print: paged
+date: "due May 12, 2020"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objective
+
+In this lab, we are going to explore some basic capabilities of GENAVi, especially for performing basic gene differential expression analysis, visualizing the results and generating reports.
+
+## 1. Sanity Checks
+
+There's no point in performing an analysis if something is wrong. The only guard against things being wrong is to check that something isn't obviously wrong! So let's get started.
+
+1. **Open a GENAVi Window** using your preferred method.
+2. **Load the datasets** you created for assignment I, which contain the filtered data for a single transcription factor and its controls.
+* Using the <span style="color:blue">Gene Expression</span> tab, upload your gene counts object into GENAVi
+* From the <span style="color:blue">Differential Expression Analysis</span> tab, upload your model file
+3. **Normalize your data.** (More accurately: select one of the normalized datasets GENAVi has prepared for you automatically)
+* From the <span style="color:blue">Gene Expression</span> tab, click the <span style="color:blue">Table Selection</span> radio button. You should see several choices. For now, select <span style="color:blue">vst - Variance Stabilizing Transformation</span>
+4. **Select some genes of interest.** We know that this experiment involves an attempted knockdown of a target TF. So we can use this functionality to perform a "sanity check", _i.e._ a quick peek at whether the experiment worked or not.
+* From the <span style="color:blue">Gene Expression</span> tab enter a search for your TF in the search bar. If possible use a pattern that matches several genes in addition to your knockdown target TF. Using the same example from Lab 1, if one enters "tead" in the search bar, TEAD1, 2, 3, and 4 will appear.
+* When the genelist filters down to one or more matching genes, select them all manually with the mouse so that they are highlighted purple. If your search  resulted in a single match result, select some random genes in addition to the target.
+5. **Visualize genes of interest.**
+* Click on the <span style="color:blue">Visualization</span> tab. After a few seconds you should see a clustered heatmap. If not, click on the <span style="color:blue">Expression plots</span> radio button at the top and it should appear.
+* Your plot may look something like this
+![](expression_heatmap1.png)
+* Hover over the plot with your mouse. Some options should appear. Click on the camera icon and save your plot.
+
+### Questions about exercise 1
+
+1. From visual inspection of your TF in the heatmap, do you think the CRISPRi knockdown experiment worked?
+2. Do you notice anything unexpected on the plot?
+3. Is there anything unexpected or strange in the example plot above for the TEAD genes?
+
+## 2. Differential Expression Analysis
+
+1. **Define a statistical model** There are lots of ways these data could be analyzed. Fortunately GENAVi makes it simple to select from among some obvious choices.
+* From the <span style="color:blue">Differential Expression Analysis</span> tab, click on the <span style="color:blue">DE analysis</span> radio button at left with the flask icon.
+* This brings up a popup with pulldown menus. From the top menu, the pulldown menu let's you choose from `treatment` or `batch`, since these variables appear in your model file associated with the samples.
+* If the `treatment` variable wasn't automatically selected, make sure it is selected now.
+* Note how the formula window autopopulates based on your selection. It should say something like this: `~ treatment       `
+* Now select "batch" from the <span style="color:blue">Select covariates for DEA</span> menu. What happens to the formula window? It should now say `~ batch + treatment`. This is the formula of the linear model that is to be fit to your data. `batch` and `treatment` represent coefficients that will be fit to estimate the effect sizes of these variables for each gene and run significance tests against a null hypothesis.
+* Lastly, you need to select a reference condition. In our case, we would like to know what is the expression of our knockdown relative to control. From the <span style="color:blue">Select reference level for DEA</span> pulldown menu, select CRISPRi_CONTROL. "Level" here does not refer to expression levels, but rather to the levels of the treatment, which (behind the scenes) is an object of class `factor` in R.
+* Press the <span style="color:blue">Perform DEA</span> button.
+2. **Inspect the results.**
+* **<span style="color:red">IMPORTANT:</span> SELECT RESULTS FIRST** Before you look at anything click the <span style="color:blue">Select Results</span> radio button and select the contrast you're interested in. For our example, there are two options: `batch` and `treatment_CRISPRi_CONTROL_vs_TEAD2`. What is happening here is that GENAVi has generated two sets of coefficients for batch and treatment, and performed a contrast for the treatment variable using DESeq2. By default `batch` will be selected (for later: look at the results of selecting `batch`), but that's not what we're interested in, so select the treatment contrast instead.
+![](DEA_result1.png)
+3. **Volcano Plots**. The volcano plot gives us a first look at our statistical model, and problems are often evident from viewing the distribution of p-values relative to log<sub>2</sub>FC.
+* In the <span style="color:blue">Differential Expression Analysis</span> tab, there are three radio buttons along the top (under the main tab bar), including <span style="color:blue">Volcano Plot</span> at the right. Select this and wait for a plot to render.
+* Suppose we are only interested in changes that pass the log<sub>2</sub>FC threshold of 1 (corresponding to an absolute 2-fold change expression relative to controls). We can change the display parameters by selecting the similarly labeled button <span style="color:blue">Volcano Plot</span>. Let's set `Log2FoldChange cut-off` to 1, and `P adjust cut-off` to 0.05. Wait for the plot to render.
+* Download your plot.
+![](volcano1.png)
+4. **Save your work**
+* Click on the left-side radio button <span style="color:blue">Generate report</span> and download into your project directory.
+
+### Questions about exercise 2
+
+1. Hover over some of the points. What is the most differentially expressed gene in your DEA set? What are the values? (<span style="color:red">careful:</span> only one axis is relevant!)
+2. If the answer to the first question was not your target TF, can you find it on the plot? What is the expression?
+3. How many differentially expressed genes are there at your p cut-off?
+4. How many differentially expressed genes given a log<sub>2</sub>FC threshold?
+5. Are there any interesting/surprising genes in your DEA set? Hint: for example, sometimes closely related genes (by function or homology) change in unexpected ways.
+6. Open the DEA report in a browser. From looking at the code generated by GENAVi, what is the impact of your choice of normalization from exercise 1? (Hint: focus on section 6 titled "Differential Expression Analysis (DEA)")
+7. What is the purpose of normalization in the context of DESeq2 analysis?

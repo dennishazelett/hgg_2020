@@ -1,0 +1,173 @@
+---
+title: 'Lab Assignment I: Install GENAVi'
+output:
+  html_document:
+    df_print: paged
+date: "due May 7, 2020"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root.dir = '~/repos/hgg_2020')
+```
+
+## Doing this lab assignment
+
+You can do this assignment in one of two ways. 1. You may type commands from the html version of this document into an R console and refer to the exercises or 2. you can open the markdown in Rstudio and enter commands interactively. With this latter option you may edit the header with your personal information, annotate the rest of the file with notes and reminders, and enter your answers to questions on the .Rmd file for safe keeping of your notes. **compiled Rmarkdown is an acceptable format to hand in homework.**
+
+## Installing R
+
+[Detailed instructions for all platforms](https://cran.R-project.org). This notebook was composed with R version 3.6.3.
+
+**Important Note: DO NOT INSTALL R version 4. Although it contains an official release, it contains a major flaw in that a previous default setting for a base package has been changed and is likely to break many dependent packages.**
+
+## Installing GENAVi
+
+Prerequisites: Any platform (typically mac, windows or linux), R, Rstudio, and bioconductor.
+
+### Install Bioconductor
+
+If you haven't done so already, install bioconductor. GENAVi will attempt to install a bunch of dependencies when you first run the app, so pre-install those packages so we can troubleshoot this step seperately. Uncomment any of the following lines you need to run. If you have any difficulty, ask a course instructor for assistance.
+
+```{r installation, echo=TRUE, results='hide'}
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install(version = "3.10")
+
+# pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph')
+
+# BiocManager::install(pkgs, ask = FALSE, checkBuilt = TRUE)
+```
+
+For further information or instructions on updating and upgrading bioconductor packages see [Bioconductor website](https://bioconductor.org/install)
+
+### Run GENAVi
+
+Shiny is available as an [installable R package via GitHub](https://github.com/alpreyes/GENAVi). It is not necessary to know how to use git for this excercise, but it is strongly encouraged for you to [learn github on your own](https://www.coursera.org/learn/version-control-with-git) if you plan to use bioinformatics analysis for your thesis work.
+
+```{r run-genavi, echo=TRUE, results='hide'}
+# shiny::runGitHub("alpreyes/GENAVi")
+```
+
+### Running the GENAVi Docker image
+
+1. If needed, [Install Docker](https://docs.docker.com/docker-hub/)
+
+2. After starting the Docker daemon, pull the GENAVi image by running at a terminal prompt (this takes several minutes with a good connection):
+
+```{sh pull-docker, echo=TRUE}
+# docker pull cedarscompbio/genavi
+```
+
+2. Run the [Docker image for GENAVi](https://hub.docker.com/r/cedarscompbio/genavi) by following the instructions on the image's web page.
+
+```{sh docker-image-start}
+# docker run --rm -p 3838:3838 cedarscompbio/genavi
+```
+
+Then visit the container with your favorite web browser at [localhost:3838/GENAVi/](http://localhost:3838/GENAVi).
+
+### Alternative GENAVi Platform
+
+The Center for Bioinformatics also hosts GENAVi via website [junkdnalab.shinyapps.io/GENAVi](https://junkdnalab.shinyapps.io/GENAVi).
+
+## Exercises
+
+### 1. Create a dataset
+You are going to create a dataset consisting of your favorite TF knockdown and appropriate control samples, and upload these datasets into GENAVi.
+
+#### Uploading data to GENAVi
+
+Let's suppose you would like to analyze TEAD2 knockdowns in K562.
+
+In the GENAVi window that you should have opened up by now, you'll notice that there is already a table of genes, experiment and expression values. This is just an example dataset containing expression data from ovarian cancer and ovarian cancer precursor cell lines. Ignore it for now.
+
+1. Using the "Data Upload" Radio button in GENAVi, navigate to the location on your HD containing the file "combinedfeatcounts.csv" and select it. GENAVi will upload the file into its cache, but it may take several minutes depending on your computer. Because it is a .csv file, GENAVi automatically recognizes the format of the file. In addition, GENAVi recognizes that you have ENEMBLE gene labels and uses these labels to cross reference to public databases and display the human-readable gene symbols.
+
+2. Now click on the Differential Expression Analysis tab along the top (3rd tab from left). This will reveal a new set of radio buttons on the left. Click the first of these, called "Metadata upload" with the excel-spreadsheet icon. Navigate to the location on your computer with the file called "crispri_modelmatrix.csv" and select it for upload. This file has been created for you for this class, but understanding what's in it and how it works with GENAVi's analysis packages is critical to be able to carry out a future independant analysis on your own data.
+
+3. Notice that this model matrix has 3 columns.
+
++ Column 1 contains the names of the samples from the data upload section
+ 
++ Columns 2 & 3 contain experimental covariates. In theory, **you may include as many such columns as you need**. GENAVi allows you to select which variables to analyze.
+
++ When you're done, close the GENAVi window and check that the console window in Rstudio has returned to the normal R prompt (with '>' carat).
+ 
+4. We need to filter our data set _and_ the metadata (model matrix) so that it contains only the data we want to perform our differential expression on. The data contain every knockdown experiment plus control experiments **AND** ENCODE RNA-seq for K562 (indicated as "RNAseq" in the treatment column). We can ignore these latter samples for now. Our object is to use the metadata from the model matrix to identify the samples we need from the feature counts '.csv' file and filter both files into smaller versions for direct upload into GENAVi. First we're going to try this in R. For this example I chose TEAD2. You should choose any other transcription factor you like and alter the code as needed.
+
+```{r inspect-data, echo=TRUE}
+## Let's open the metadata file
+setwd('~/repos/hgg_2020')
+metadat <- read.csv(
+  file = '~/repos/hgg_2020/data/crispri_modelmatrix.csv', 
+  header = TRUE,
+  stringsAsFactors = FALSE)
+
+## Inspect the TEAD2 samples in the metadata file:
+knitr::kable(subset(metadat, treatment == 'TEAD2'))
+```
+
+Do you notice that there are two repolicates for this experiment in two different batches? Answer these questions in a text file:
+
+a. (easy) Is this unique to this factor or is it a general strategy throughout the study?
+
+b. (easy) Why do you think the Authors chose the strategy that they did?
+
+c. (moderate) Is the chosen strategy appropriate? Does it make sense (is it optimal) for the current activity, _i.e._ analyzing the effects of knockdown of a single factor? Why would (or wouldn't) you recommend this strategy?
+
+d. (hard) Are there designs that could effectively address/accomodate different study goals?
+
+5. Filter your data in R using this code chunk as a guide:
+
+```{r filter-data, echo=TRUE}
+tead.metadat <- rbind(
+  subset(metadat, treatment == 'TEAD2'),
+  subset(
+    subset(metadat, treatment == 'CRISPRi_CONTROL'),
+    batch %in% c(4, 5))
+  )
+
+tead.samples <- tead.metadat$samples
+
+## Now we read in the data from feature counts file
+cts <- read.csv(
+  '~/repos/hgg_2020/data/combinedfeatcounts.csv', 
+  header = TRUE,
+  stringsAsFactors = FALSE)
+## Take a quick peek at the contents
+knitr::kable(cts[1:5, 1:4])
+
+## We need to select the columns from our tead.samples, including the Geneid column:
+
+tead.counts <- cts[, c("Geneid", tead.samples)]
+
+## Now we're ready to export these object for upload to GENAVi
+write.table(
+  tead.counts, 
+  file = "~/repos/hgg_2020/data/teadfeatcounts.csv",
+  row.names = FALSE,
+  quote = FALSE,
+  sep = ','
+)
+
+write.table(
+  tead.metadat,
+  file = "~/repos/hgg_2020/data/teadmodel.csv",
+  row.names = FALSE,
+  quote = FALSE,
+  sep = ','
+)
+```
+
+6. Confirm that you can upload your filtered dataset _and_ filtered metadata into GENAVi.
+
+
+
+### 2. Doing it the old fashioned way
+
+1. Choose a new TF.
+
+2. Repeat the operation we did in lab exercise 1 with your new TF, but this time use EXCEL or any other commercial or open source spreadsheet program of your choice to filter your data sets and create new data sources.
+
+3. Confirm that you can import your excel-created data and metadata into GENAVi

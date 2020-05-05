@@ -22,7 +22,7 @@ Due to social distancing protocols the course will take place online via a passw
 
 ## Expectations: Attendance, Homework & Grading
 
-The course is worth 100 points. Homework is expected to be turned in on time. Late assignments will be given a maximum of 50% of full credit up to one lecture _after_ the original due date. Recommended readings are indicated on the syllabus. Assignment 1 is to choose one or more transcription factors from the CRISPRi dataset and follow the lecture series in completing the steps of an analysis pipeline from data acquisition through through hypothesis testing and visualization. Each stage of analysis and results is completed in successive homework assignments ("Labs") or question sets. Each question set is worth 10 points and will be graded based on completeness. Each student will also be required to present their homework at least once during the course during a workshop. For this informal presentation, the student will be graded on their ability to discuss the figures they generated and any challenges encountered (10 points). A final exam worth 30 points will be given at the 12 lecture.
+The course is worth 100 points. Homework is expected to be turned in on time. Late assignments will be given a maximum of 50% of full credit up to one lecture _after_ the original due date. Recommended readings are indicated on the syllabus. During the course, students will choose one or more transcription factors from the CRISPRi dataset and follow the lecture series in completing the steps of an analysis pipeline from data acquisition through through hypothesis testing and visualization. Each stage of analysis and results is completed in successive homework assignments ("Labs") or question sets. Each question set is worth 10 points and will be graded based on completeness. Each student will also be required to present their homework at least once during the course during a workshop. For this informal presentation, the student will be graded on their ability to discuss the figures they generated and any challenges encountered (10 points). A final exam worth 30 points will be given at the 12 lecture.
 
 **Attendance is required** no exceptions. You may obtain permission ahead of time or with extenuating circumstances after the fact from the graduate school (email to Emma Yates Kassler). Homework assignments are required on time (see schedule below) regardless of attendance or for half credit **one lecture late**. Unexcused absences result in an incomplete grade.
 
@@ -74,10 +74,10 @@ sched <- data.frame(
   day = c("Tue", "Thu", "Tue", "Thu", "Tue", "Thu", "Tue", "Thu", "Tue", "Thu", "Tue", "Thu"),
   date = format(as.Date(c("2020-05-05", "2020-05-07", "2020-05-12", "2020-05-14", "2020-05-19", "2020-05-21", "2020-05-26", "2020-05-28", "2020-06-02", "2020-06-04", "2020-06-09", "2020-06-11")), "%m/%d"),
   lecture = c("Intro", "DGE", "Wkshp", "Expl Anls", "Review", "GO Anls", "Wkshp", "Formats", "Wkshp", "MultiQC", "Review", "Exam"),
-  hmwk = c("LI", "LII", "", "LIII", "", "LIV", "", "QSV", "", "QSVI", "", ""),
-  due = c("", "LI", "LII", "", "LIII", "", "LIV", "", "QSV", "", "QSVI", "EI")
+  hmwk = c("L1", "L2", "", "L3", "", "L4", "", "QS5", "", "QS6", "", ""),
+  due = c("", "L1", "L2", "", "L3", "", "L4", "", "QS5", "", "QS6", "E1")
 )
-knitr::kable(sched, caption = "**Course schedule and outline.** Roman numerals are preceded by 'L' for labs, 'QS' for question sets and 'E' for exams. Optional times for oral presentation are during workshops.")
+knitr::kable(sched, caption = "**Course schedule and outline.** Numbered assignments are preceded by 'L' for labs, 'QS' for question sets and 'E' for exams. Optional times for oral presentation are during workshops.")
 ```
 
 ## Course Materials

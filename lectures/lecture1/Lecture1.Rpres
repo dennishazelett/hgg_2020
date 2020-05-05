@@ -1,8 +1,9 @@
-Lecture 1
+Lecture 1 Course Overview & GENAVi
 ========================================================
 author: Dennis Hazelett
 date: 5/5/2020
 autosize: true
+transition: fade
 ```{r setup, include=FALSE}
 opts_chunk$set(cache=TRUE)
 ```
@@ -19,7 +20,7 @@ Course Goals
 Course Structure
 ========================================================
 
-We will spend 6 weeks exploring a single bid dataset
+We will spend 6 weeks exploring a single big dataset
 
 - Real world analyses take months to complete
 - Want to maximize familiarity with the data so we can focus on elements of the pipeline
@@ -57,6 +58,18 @@ setwd('~/repos/hgg_2020/')
 replicate_model <- read.csv("data/modelmatrix.csv", row.names = 1, header = TRUE)
 replicate_model[1:15,]
 ```
+
+The Method
+========================================================
+
+Why GENAVi?
+- emphasize practical skills
+- de-emphasize programming skills
+
+"What if I am already a cloud-computing ML jockey?"
+- GENAVi not required
+- There is some value to learning GENAVi, _e.g._ teach DEA to non-computer savvy colleagues
+- Engage with course instructers on more interesting problems
 
 Attendance & Homework Expectations
 ========================================================
@@ -113,6 +126,18 @@ Oral Presentations
 - volunteer on the day of; 3 opportunities 5/12, 5/19, 5/26
 - 2 to 3 people during each workshop
 
+Course Materials
+========================================================
+* All course materials available via:
+* GitHub: dennishazelett/hgg_2020
+* Box: Bioinformatics2020 (just a copy of the working tree in the git repo)
+
+Includes:
+- lecture slides
+- homework & question sets
+- all code
+- reading assignments
+
 Let's look at some data
 ========================================================
 ```{r unique-tfs, echo=TRUE}
@@ -126,3 +151,6 @@ Global overview
 
 Ordered TFs
 ========================================================
+
+![](ordered_crispri.png)
+

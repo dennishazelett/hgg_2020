@@ -1,3 +1,4 @@
+data
 .Rproj.user
 .Rhistory
 .RData
@@ -5,4 +6,16 @@
 *.html
 *.pdf
 *.log
-*.tex
+*.texLecture1-cache
+Lecture1-figure
+Lecture1-cache
+Lecture1.html
+Lecture1.md
+clustered_crispri.png
+ordered_crispri.png
+Lab_Assignment_I.html
+Lab_Assignment_I.log
+Lab_Assignment_I.nb.html
+Lecture1-cache
+*.png
+lectures/lecture2/Lecture2.md
