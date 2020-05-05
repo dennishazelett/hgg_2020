@@ -7,13 +7,16 @@ date: "due May 7, 2020"
 ---
 
 ```{r setup, include=FALSE}
+Sys.getenv("HOME") # see where your home directory is
+course_directory <- file.path(Sys.getenv("HOME"), "repos", "hgg_2020")
+course_directory # double check what you set your course_directory to
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_chunk$set(root.dir = '~/repos/hgg_2020')
+knitr::opts_chunk$set(root.dir = course_directory)
 ```
 
 ## Doing this lab assignment
 
-You can do this assignment in one of two ways. 1. You may type commands from the html version of this document into an R console and refer to the exercises or 2. you can open the markdown in Rstudio and enter commands interactively. With this latter option you may edit the header with your personal information, annotate the rest of the file with notes and reminders, and enter your answers to questions on the .Rmd file for safe keeping of your notes. **compiled Rmarkdown is an acceptable format to hand in homework.**
+You can do this assignment in one of two ways. 1. You may type commands from the html version of this document into an R console and refer to the exercises or 2. you can open the markdown in Rstudio and enter commands interactively. With this latter option you may edit the header and the "setup" code chunk above with your personal information, annotate the rest of the file with notes and reminders, and enter your answers to questions on the .Rmd file for safe keeping of your notes. **compiled Rmarkdown is an acceptable format to hand in homework.**
 
 ## Installing R
 
@@ -27,16 +30,16 @@ Prerequisites: Any platform (typically mac, windows or linux), R, Rstudio, and b
 
 ### Install Bioconductor
 
-If you haven't done so already, install bioconductor. GENAVi will attempt to install a bunch of dependencies when you first run the app, so pre-install those packages so we can troubleshoot this step seperately. Uncomment any of the following lines you need to run. If you have any difficulty, ask a course instructor for assistance.
+If you haven't done so already, install bioconductor. GENAVi will attempt to install a bunch of dependencies when you first run the app, so pre-install those packages so we can troubleshoot this step seperately. The following lines will install all the dependencies that you need to run GENAVi. If you have any difficulty, ask a course instructor for assistance.
 
-```{r installation, echo=TRUE, results='hide'}
-# if (!requireNamespace("BiocManager", quietly = TRUE))
-#     install.packages("BiocManager")
-# BiocManager::install(version = "3.10")
+```{r installation, echo=TRUE, results='hide', eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+     install.packages("BiocManager")
+BiocManager::install(version = "3.10")
 
-# pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph')
+pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph')
 
-# BiocManager::install(pkgs, ask = FALSE, checkBuilt = TRUE)
+BiocManager::install(pkgs, ask = FALSE, checkBuilt = TRUE)
 ```
 
 For further information or instructions on updating and upgrading bioconductor packages see [Bioconductor website](https://bioconductor.org/install)
@@ -45,8 +48,8 @@ For further information or instructions on updating and upgrading bioconductor p
 
 Shiny is available as an [installable R package via GitHub](https://github.com/alpreyes/GENAVi). It is not necessary to know how to use git for this excercise, but it is strongly encouraged for you to [learn github on your own](https://www.coursera.org/learn/version-control-with-git) if you plan to use bioinformatics analysis for your thesis work.
 
-```{r run-genavi, echo=TRUE, results='hide'}
-# shiny::runGitHub("alpreyes/GENAVi")
+```{r run-genavi, echo=TRUE, results='hide', eval=FALSE}
+shiny::runGitHub("alpreyes/GENAVi")
 ```
 
 ### Running the GENAVi Docker image
@@ -55,14 +58,14 @@ Shiny is available as an [installable R package via GitHub](https://github.com/a
 
 2. After starting the Docker daemon, pull the GENAVi image by running at a terminal prompt (this takes several minutes with a good connection):
 
-```{sh pull-docker, echo=TRUE}
-# docker pull cedarscompbio/genavi
+```{sh pull-docker, echo=TRUE, eval=FALSE}
+docker pull cedarscompbio/genavi
 ```
 
 2. Run the [Docker image for GENAVi](https://hub.docker.com/r/cedarscompbio/genavi) by following the instructions on the image's web page.
 
-```{sh docker-image-start}
-# docker run --rm -p 3838:3838 cedarscompbio/genavi
+```{sh docker-image-start, eval=FALSE}
+docker run --rm -p 3838:3838 cedarscompbio/genavi
 ```
 
 Then visit the container with your favorite web browser at [localhost:3838/GENAVi/](http://localhost:3838/GENAVi).
@@ -86,11 +89,13 @@ In the GENAVi window that you should have opened up by now, you'll notice that t
 
 2. Now click on the Differential Expression Analysis tab along the top (3rd tab from left). This will reveal a new set of radio buttons on the left. Click the first of these, called "Metadata upload" with the excel-spreadsheet icon. Navigate to the location on your computer with the file called "crispri_modelmatrix.csv" and select it for upload. This file has been created for you for this class, but understanding what's in it and how it works with GENAVi's analysis packages is critical to be able to carry out a future independant analysis on your own data.
 
-3. Notice that this model matrix has 3 columns.
+3. Notice that this model matrix has 4 columns.
 
 + Column 1 contains the names of the samples from the data upload section
  
 + Columns 2 & 3 contain experimental covariates. In theory, **you may include as many such columns as you need**. GENAVi allows you to select which variables to analyze.
+
++ Column 4 indicates the [ensembl geneid](https://uswest.ensembl.org/info/genome/stable_ids/index.html) for the transcription factor that was repressed by CRISPRi
 
 + When you're done, close the GENAVi window and check that the console window in Rstudio has returned to the normal R prompt (with '>' carat).
  
@@ -98,9 +103,9 @@ In the GENAVi window that you should have opened up by now, you'll notice that t
 
 ```{r inspect-data, echo=TRUE}
 ## Let's open the metadata file
-setwd('~/repos/hgg_2020')
+setwd(course_directory)
 metadat <- read.csv(
-  file = '~/repos/hgg_2020/data/crispri_modelmatrix.csv', 
+  file = file.path(course_directory, 'data', 'crispri_modelmatrix.csv'), 
   header = TRUE,
   stringsAsFactors = FALSE)
 
@@ -132,7 +137,7 @@ tead.samples <- tead.metadat$samples
 
 ## Now we read in the data from feature counts file
 cts <- read.csv(
-  '~/repos/hgg_2020/data/combinedfeatcounts.csv', 
+  file = file.path(course_directory, 'data', 'combinedfeatcounts.csv'), 
   header = TRUE,
   stringsAsFactors = FALSE)
 ## Take a quick peek at the contents
@@ -145,7 +150,7 @@ tead.counts <- cts[, c("Geneid", tead.samples)]
 ## Now we're ready to export these object for upload to GENAVi
 write.table(
   tead.counts, 
-  file = "~/repos/hgg_2020/data/teadfeatcounts.csv",
+  file = file.path(course_directory, 'data', 'teadfeatcounts.csv'),
   row.names = FALSE,
   quote = FALSE,
   sep = ','
@@ -153,7 +158,7 @@ write.table(
 
 write.table(
   tead.metadat,
-  file = "~/repos/hgg_2020/data/teadmodel.csv",
+  file = file.path(course_directory, 'data', 'teadmodel.csv'),
   row.names = FALSE,
   quote = FALSE,
   sep = ','
