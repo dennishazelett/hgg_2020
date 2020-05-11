@@ -221,8 +221,23 @@ What about the DESeq2 model?
 What about the DESeq2 model?
 ========================================================
 - Uses the negative bionomial distribution
-- Similar to binomial, but models 0 counts or "failures" rather than successes
+- Similar idea to binomial, but models 0 counts or "failures" rather than successes
+- Poisson breaks down when variance >> mean
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar idea to binomial, but models 0 counts or "failures" rather than successes
+- Poisson breaks down when variance >> mean
 - Alternative parameterization includes size or "dispersion" parameter
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar idea to binomial, but models 0 counts or "failures" rather than successes
+- Poisson breaks down when variance >> mean
+- Alternative parameterization includes size or "dispersion" parameter
+- Dispersion is a property of each sample which can be fit to the data
 
 Fundamentals of Principle Components Analysis
 ========================================================
