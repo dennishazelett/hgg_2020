@@ -1,3 +1,9 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
 Lecture 3 Exploratory and Principle Components Analysis
 ========================================================
 author: Dennis Hazelett
@@ -5,11 +11,16 @@ date: 5/12/2020
 autosize: true
 transition: fade
 ```{r setup, include=FALSE}
+Sys.getenv("HOME") # see where your home directory is
+course_directory <- file.path(Sys.getenv("HOME"), "repos", "hgg_2020")
 library(ggplot2)
 library(ggthemes)
 library(tidyverse)
-opts_chunk$set(cache=TRUE)
+library(ggridges)
+library(knitr)
+opts_chunk$set(cache=TRUE, fig.width=18, fig.height=6)
 ```
+
 
 statistical _vs._ probabalistic models
 ========================================================
@@ -53,6 +64,7 @@ rbinom(n=1, size = 4e07, prob=1e-05) # 40m reads, 10 CPM
 
 poisson distribution
 ========================================================
+class: small-code
 
 Apply bernoulli logic to count data in RNA-seq
 
@@ -60,22 +72,159 @@ Apply bernoulli logic to count data in RNA-seq
 ```{r many_coins, echo = TRUE}
 ngenes <- 2e04 # 20,000 protein coding genes
 gene_expr <- rbeta(ngenes, 1, 1 + ngenes)
-hist(gene_expr)
 ```
-
 
 poisson distribution (cont'd)
 ========================================================
+class: small-code
+
+Apply bernoulli logic to count data in RNA-seq
+
+```{r expr_prob_graph_pois, echo = TRUE}
+ngenes <- 5.8e04 # 58,000 coding genes
+gene_expr <- rbeta(ngenes, 1, 1 + ngenes)
+hist(gene_expr)
+```
+
+poisson distribution (cont'd)
+========================================================
+class: small-code 
 
 Simulating count data using poisson
 
 key parameter: lambda (also called the "rate" parameter; lambda = p * total_obs)
 
-```{r sim_pois_coins, echo = TRUE}
+```{r sim_pois_coins, eval = FALSE, echo = TRUE}
 read_depth <- 4e07 # 40m reads
-expr_level <- rpois(n=read_depth, lambda = read_depth * gene_expr)
+expr_level <- rpois(n=ngenes, lambda = gene_expr * read_depth)
 sim_genes_1 <- data.frame(gene_id = 1:ngenes, expr_level)
 expr_vals_plot <- ggplot(sim_genes_1, aes(x=expr_level)) + geom_histogram()
-ggsave(filename = 'poisson_sim_vals_histogram.png', plot = expr_vals_plot)
 ```
+
+graph of poisson simulated counts
+========================================================
+class: small-code 
+
+```{r sim_pois_coins_plot, eval = TRUE, echo = TRUE}
+read_depth <- 4e07 # 40m reads
+expr_level <- rpois(n=ngenes, lambda = gene_expr * read_depth)
+sim_genes_1 <- data.frame(gene_id = 1:ngenes, expr_level)
+expr_vals_plot <- ggplot(sim_genes_1, aes(x=expr_level)) + geom_histogram()
+expr_vals_plot
+```
+
+What about real data???
+========================================================
+class: small-code
+
+Let's look at some of our CRISPRi data:
+
+```{r}
+tead2counts <- read.csv(file = "~/repos/hgg_2020/data/teadfeatcounts.csv", row.names="Geneid")
+head(tead2counts)
+colSums(tead2counts)
+```
+
+
+What about real data???
+========================================================
+class: small-code 
+
+How are these data distributed?
+
+```{r}
+colSums(tead2counts)
+```
+
+What about real data???
+========================================================
+class: small-code
+
+How are these data distributed?
+
+```{r}
+ggplot(gather(tead2counts, key = 'sample', value = 'expression'), aes(y = sample, x = expression)) + geom_density_ridges()
+```
+
+What about real data???
+========================================================
+class: small-code 
+
+Log scale reveals problems
+
+```{r}
+ggplot(gather(tead2counts, key = 'sample', value = 'expression'), 
+       aes(y = sample, x = expression + 1)) + 
+  geom_density_ridges() + scale_x_log10() + theme_minimal() + 
+  theme(text = element_text(size=20))
+sum(rowSums(tead2counts)==0)
+```
+
+What about real data???
+========================================================
+class: small-code
+Filter low or non-existent genes:
+
+```{r}
+ggplot(gather(tead2counts[rowSums(tead2counts)>0,], key = 'sample', value = 'expression'), 
+       aes(y = sample, x = expression + 1)) + 
+  geom_density_ridges() + scale_x_log10() + theme_minimal() + 
+  theme(text = element_text(size=20))
+```
+
+What about real data???
+========================================================
+class: small-code
+Filter low or non-existent genes:
+
+```{r}
+ggplot(gather(tead2counts[rowSums(tead2counts)>4,], key = 'sample', value = 'expression'), 
+       aes(y = sample, x = expression + 1)) + 
+  geom_density_ridges() + scale_x_log10() +  theme_minimal() + 
+  theme(text = element_text(size=20))
+
+```
+
+Exploration of DEA results
+========================================================
+class: small-code
+
+```{r, echo = FALSE}
+maframe <- read.csv('~/repos/hgg_2020/data/TEAD2_DEA_0p5cutoff_results_files/treatment_TEAD2_vs_CRISPRi_CONTROL.csv')
+head(maframe)
+```
+
+The M-A plot
+========================================================
+class: small-code
+
+- M: Log Fold Change
+- A: Expression Level
+
+smaller absolute differences lead to larger LFC at the low end
+
+```{r}
+ggplot(maframe, aes(x = baseMean, y = log2FoldChange)) + 
+  geom_point(alpha = 0.05) + xlab("A") + ylab("M") + scale_x_log10() + theme_minimal() + 
+  theme(text = element_text(size=20))
+```
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar to binomial, but models 0 counts or "failures" rather than successes
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar to binomial, but models 0 counts or "failures" rather than successes
+- Alternative parameterization includes size or "dispersion" parameter
+
+Fundamentals of Principle Components Analysis
+========================================================
+class: small-code
 
