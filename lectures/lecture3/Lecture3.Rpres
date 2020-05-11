@@ -1,0 +1,81 @@
+Lecture 3 Exploratory and Principle Components Analysis
+========================================================
+author: Dennis Hazelett
+date: 5/12/2020
+autosize: true
+transition: fade
+```{r setup, include=FALSE}
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+opts_chunk$set(cache=TRUE)
+```
+
+statistical _vs._ probabalistic models
+========================================================
+Last lecture we talked about different types of analyses
+* fitting data to model
+* fitting model to data
+
+statistical _vs._ probabalistic models
+========================================================
+Last lecture we talked about different types of analyses
+* fitting data to model -- "statistical models"
+* fitting model to data -- "probabalistic models"
+
+statistical _vs._ probabalistic models
+========================================================
+Last lecture we talked about different types of analyses
+* fitting data to model -- "statistical models"
+* fitting model to data -- "probabalistic models" - "generative"
+
+Approaching a generative model of count data for RNA-seq
+========================================================
+
+Suppose we flip a coin (Bernoulli distribution)
+
+![](single_coin_flip.jpg)
+
+```{r gene-counts, echo = TRUE}
+rbinom(n=10, size = 1, prob=0.5)
+```
+
+Genes according to the binomial distribution
+========================================================
+
+Apply bernoulli logic to count data in RNA-seq
+
+![](single_coin_flip.jpg)
+
+```{r coin-flip, echo = TRUE}
+rbinom(n=1, size = 4e07, prob=1e-05) # 40m reads, 10 CPM
+```
+
+poisson distribution
+========================================================
+
+Apply bernoulli logic to count data in RNA-seq
+
+![](many-coins.jpg)
+```{r many_coins, echo = TRUE}
+ngenes <- 2e04 # 20,000 protein coding genes
+gene_expr <- rbeta(ngenes, 1, 1 + ngenes)
+hist(gene_expr)
+```
+
+
+poisson distribution (cont'd)
+========================================================
+
+Simulating count data using poisson
+
+key parameter: lambda (also called the "rate" parameter; lambda = p * total_obs)
+
+```{r sim_pois_coins, echo = TRUE}
+read_depth <- 4e07 # 40m reads
+expr_level <- rpois(n=read_depth, lambda = read_depth * gene_expr)
+sim_genes_1 <- data.frame(gene_id = 1:ngenes, expr_level)
+expr_vals_plot <- ggplot(sim_genes_1, aes(x=expr_level)) + geom_histogram()
+ggsave(filename = 'poisson_sim_vals_histogram.png', plot = expr_vals_plot)
+```
+
