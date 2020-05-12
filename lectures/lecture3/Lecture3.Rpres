@@ -237,7 +237,16 @@ What about the DESeq2 model?
 - Similar idea to binomial, but models 0 counts or "failures" rather than successes
 - Poisson breaks down when variance >> mean
 - Alternative parameterization includes size or "dispersion" parameter
-- Dispersion is a property of each sample which can be fit to the data
+- Dispersion is a property of each gene which can be fit to the data
+
+Gene-wise Dispersion Estimates (DESeq2)
+========================================================
+![](tead2_dispersion.png)
+
+
+Gene-wise Dispersion Estimates (DESeq2)
+========================================================
+![](all_experiments_dispersion.png)
 
 Fundamentals of Principle Components Analysis
 ========================================================
