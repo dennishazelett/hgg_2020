@@ -119,10 +119,9 @@ class: small-code
 
 Let's look at some of our CRISPRi data:
 
-```{r}
+```{r head-tead2-counts}
 tead2counts <- read.csv(file = "~/repos/hgg_2020/data/teadfeatcounts.csv", row.names="Geneid")
 head(tead2counts)
-colSums(tead2counts)
 ```
 
 
@@ -132,7 +131,7 @@ class: small-code
 
 How are these data distributed?
 
-```{r}
+```{r read-depths}
 colSums(tead2counts)
 ```
 
@@ -142,7 +141,7 @@ class: small-code
 
 How are these data distributed?
 
-```{r}
+```{r sample-density}
 ggplot(gather(tead2counts, key = 'sample', value = 'expression'), aes(y = sample, x = expression)) + geom_density_ridges()
 ```
 
@@ -152,7 +151,7 @@ class: small-code
 
 Log scale reveals problems
 
-```{r}
+```{r log-sample-density}
 ggplot(gather(tead2counts, key = 'sample', value = 'expression'), 
        aes(y = sample, x = expression + 1)) + 
   geom_density_ridges() + scale_x_log10() + theme_minimal() + 
@@ -165,7 +164,7 @@ What about real data???
 class: small-code
 Filter low or non-existent genes:
 
-```{r}
+```{r log-sample-dens-filtered}
 ggplot(gather(tead2counts[rowSums(tead2counts)>0,], key = 'sample', value = 'expression'), 
        aes(y = sample, x = expression + 1)) + 
   geom_density_ridges() + scale_x_log10() + theme_minimal() + 
@@ -177,7 +176,7 @@ What about real data???
 class: small-code
 Filter low or non-existent genes:
 
-```{r}
+```{r log-sample-dens-stringent-filtered}
 ggplot(gather(tead2counts[rowSums(tead2counts)>4,], key = 'sample', value = 'expression'), 
        aes(y = sample, x = expression + 1)) + 
   geom_density_ridges() + scale_x_log10() +  theme_minimal() + 
@@ -189,7 +188,7 @@ Exploration of DEA results
 ========================================================
 class: small-code
 
-```{r, echo = FALSE}
+```{r expression-data-view, echo = FALSE}
 maframe <- read.csv('~/repos/hgg_2020/data/TEAD2_DEA_0p5cutoff_results_files/treatment_TEAD2_vs_CRISPRi_CONTROL.csv')
 head(maframe)
 ```
@@ -203,7 +202,7 @@ class: small-code
 
 smaller absolute differences lead to larger LFC at the low end
 
-```{r}
+```{r maplot}
 ggplot(maframe, aes(x = baseMean, y = log2FoldChange)) + 
   geom_point(alpha = 0.05) + xlab("A") + ylab("M") + scale_x_log10() + theme_minimal() + 
   theme(text = element_text(size=20))
@@ -250,5 +249,39 @@ Gene-wise Dispersion Estimates (DESeq2)
 
 Fundamentals of Principle Components Analysis
 ========================================================
-class: small-code
 
+[Nat Biotechnol. 2008 Mar;26(3):303-4](https://www.nature.com/articles/nbt0308-303)
+
+![](PCA_fig1.png)
+
+Each dot represents a breast cancer sample plotted against its expression levels for two genes.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig2.png)
+
+PCA identifies the two directions (PC1 and PC2) along which the data have the largest spread.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig3.png)
+
+Samples plotted in one dimension using their projections onto the first principal component (PC1) for ER+, ER– and all samples separately.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig4.png)
+
+The variance of the principal components when PCA is applied to all 8,534 genes with
+expression levels for all samples.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig5.png)
+
+Samples colored according to ERBB2 status (blue, ERBB2+;
+brown, ERBB2 – ; green, unknown
+
+t-SNE & UMAP: reducing multidimensional analysis to 2D
+========================================================
+![](t-SNE.png)
