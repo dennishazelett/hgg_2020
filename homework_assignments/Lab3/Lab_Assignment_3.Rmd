@@ -141,6 +141,25 @@ Replace this text with your answer
 Replace this text with your answer
 </b></i></span>
 
+4. Why does GENAVi provide the capability of generating an HTML report? Change the color of the **_best_** answer choice below to red. Some answer choices are true but not best.
+
+<span style="color:#31a354"><i><b>
+a. To throw your P.I. off the scent.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+b. For publication purposes.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+c. For troubleshooting your analysis.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+d. To help you learn to write code.
+</b></i></span>
+
+
 ## Exercise 4: t-SNE
 
 Watch this.
