@@ -1,0 +1,449 @@
+---
+title: "Lab 2 Discussion"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggrepel)
+library(DESeq2)
+library(RhpcBLASctl)
+omp_set_num_threads(1)
+blas_set_num_threads(1)
+course_directory <- file.path(Sys.getenv("HOME"), "devel", "hgg_2020")
+```
+
+## Import All Data
+
+In this section we import all of the feature counts data and the model matrix that defines our treatments and batches.
+
+Reading in the data in this fashion leaves us with a `data.frame` without rownames, so we convert it to a matrix, and move the `Geneid` column to the rownames.
+
+With our model matrix, we have excluded batch "Z" to remove the deeper RNA-Seq of K562 that was not explicitly part of this set of experiments.
+
+```{r import_data, message=FALSE}
+count.matrix <- readr::read_csv(file.path(course_directory, "data/combinedfeatcounts.csv"))
+
+count.matrix <- count.matrix %>%
+  column_to_rownames(var = "Geneid") %>%
+  as.matrix()
+
+model.matrix <- readr::read_csv(file.path(course_directory, "data/modelmatrix.txt"))
+
+model.matrix <- model.matrix %>%
+  filter(batch != "Z") %>%
+  mutate(treatment = relevel(as.factor(treatment), ref = "CRISPRi_CONTROL"))
+```
+
+## Run Differential Expression
+
+Here we run the differential expression, controlling for batch across all treatments. We only use the samples from the remaining model matrix.
+
+```{r differential_expression, cache=TRUE}
+dds <- DESeqDataSetFromMatrix(countData = count.matrix[, model.matrix$samples],
+                              colData = model.matrix,
+                              design = ~batch + treatment)
+
+dds <- DESeq(dds, parallel = T, BPPARAM = BiocParallel::MulticoreParam(workers = 8))
+
+save(dds, file = file.path(course_directory, "all.data.dds.rda"))
+```
+
+The object we created, with the DESeq call, actually has results for each transcription factor knockdown. So we will have to select the results for each experiment separately
+
+```{r}
+resultsNames(dds)
+```
+
+## Extracting results from DESeq objects
+
+As you can see above we have 3 less interesting covariates that we will be ingnoring in the the following work. The `Intercept`, `batch_B_vs_A`, and `batch_C_vs_A` are ignored in this loop. Each subsequent results object, e.g. `treatment_ARID3A_vs_CRISPRi_CONTROL`, gets added to the overall data set.
+
+```{r calculate_results, cache=TRUE}
+for(myres in seq_along(resultsNames(dds))) {
+  
+  if(myres %in% c(1:3)) next() ## See resultsNames(dds)[1:3] - We skip these
+  
+  sample.results <- results(dds, name = resultsNames(dds)[[myres]])
+  
+  sample.results$experiment <- resultsNames(dds)[[myres]]
+  
+  sample.results <- as.data.frame(sample.results) %>% 
+    rownames_to_column(var = 'row') %>% 
+    as_tibble()
+  
+  if(myres == 4) { # the first result that we care about
+    res.obj <- sample.results
+  } else { # all subsequent results get attached to the first one
+    res.obj <- bind_rows(res.obj, sample.results)
+  }
+
+}
+```
+
+We can summarise the results by examining for each experiment, how many significant genes were found, and what the gene with the lowest p-value is.
+
+```{r summarise_results}
+res.obj.summary <- res.obj %>% 
+  group_by(experiment) %>% 
+  filter(padj < 0.05 & !is.na(padj)) %>% 
+  summarise(sig_genes = n()) %>% 
+  arrange(-sig_genes)
+
+res.obj %>% 
+  group_by(experiment) %>% 
+  top_n(1, -padj)
+
+res.obj.summary
+```
+
+There doesn't seem to be a strong correlation between the number of differentially expressed genes and the log2FC of the CRISPRi target.
+
+```{r}
+res.obj.summaryplot <- res.obj %>% 
+  left_join(res.obj.summary) %>%
+  separate(experiment, into = c("foo", "treatment", "bar"), sep = "_") %>% 
+  select(-c("foo", "bar")) %>% 
+  left_join(model.matrix) %>% 
+  filter(row == crispri_geneid) %>% 
+  group_by(treatment) %>%
+  top_n(1, samples)
+
+ggplot(res.obj.summaryplot, aes(x = log2FoldChange, y = sig_genes)) +
+  geom_point() + 
+  scale_x_continuous("log2 fold change of CRISPRi") +
+  scale_y_log10("Number of genes significantly differentially expressed")
+```
+
+## Run Differential Expression - Independently for each Transcription Factor
+
+Here we run along our model matrix, and select out one transcription factor at a time, with it's matching controls. We then perform the differential expression as above, but with only the single transcription factor at a time (hence not including batch in the `design` section). 
+
+```{r}
+levels(model.matrix$treatment)
+```
+
+We once again exclude the `CRISPRi_CONTROL` (the first among the treatment levels) as a test to run.
+
+```{r calculate_results_one_at_a_time, cache=TRUE, message=FALSE}
+
+for(myres in seq_along(levels(model.matrix$treatment))) {
+  
+  if(myres == 1) next()
+
+  single.batch <- model.matrix %>%
+    filter(treatment %in% levels(model.matrix$treatment)[[myres]]) %>%
+    pull(batch) %>%
+    unique()
+  
+  single.mm <- model.matrix %>% 
+    filter(treatment %in% c("CRISPRi_CONTROL", levels(model.matrix$treatment)[[myres]])) %>%
+    filter(batch == single.batch)
+  
+  dds <- DESeqDataSetFromMatrix(countData = count.matrix[, single.mm$samples],
+                                colData = single.mm,
+                                design = ~ treatment)
+  
+  dds <- DESeq(dds)
+  
+  sample.results <- results(dds)
+  
+  sample.results <- as.data.frame(sample.results) %>% 
+    rownames_to_column(var = 'row') %>% 
+    as_tibble()
+  
+  sample.results$experiment <- resultsNames(dds)[[2]]
+  
+  if(myres == 2) {
+    res.obj.oneatatime <- sample.results
+  } else {
+    res.obj.oneatatime <- bind_rows(res.obj.oneatatime, sample.results)
+  }
+
+}
+```
+
+We can summarise the results by examining for each experiment, how many significant genes were found, and what the gene with the lowest p-value is.
+
+```{r summarise_results_one_at_a_time}
+res.obj.oneatatime.summary <- res.obj.oneatatime %>% 
+  group_by(experiment) %>% 
+  filter(padj < 0.05 & !is.na(padj)) %>% 
+  summarise(sig_genes = n()) %>% 
+  arrange(-sig_genes)
+
+res.obj.oneatatime %>% 
+  group_by(experiment) %>% 
+  top_n(1, -padj)
+
+res.obj.oneatatime.summary
+```
+
+## Comparing Differential Expression between analysis strategies.
+
+We merge the two results sumammary objects, and attach addtional information about selected transcription factors to make plotting easier later.
+
+```{r}
+de.summary <- left_join(res.obj.summary, res.obj.oneatatime.summary, 
+                        by = c("experiment")) %>%
+  dplyr::rename(all = sig_genes.x, one = sig_genes.y)
+
+de.summary[is.na(de.summary$one),]$one <- 0L # If there were no differentially expressed genes for a comparison, its listed as NA, here we correct that to zero.
+
+student.genes <- data.frame(genes = c("HMGB2", "BACH1", "ZBTB33", "STAT6", "GATA1", "SMAD5", "ATF3", "HMBOX1"),
+                            student = c("Alonzo", "Gamboa", "Marek-Iannucchi", "Nadeau",
+                                         "Ramos", "Regis", "Devarakonda", "Suresh"),
+                            stringsAsFactors = FALSE)
+student.genes$experiment <- paste0("treatment_", student.genes$genes, "_vs_CRISPRi_CONTROL")
+
+de.summary <- left_join(de.summary, student.genes)
+
+de.summary
+```
+
+And here we can plot those results, with the DE results when running *all samples* together on the X axis, and *one at a time* on the Y axis. 
+
+You may notice this looks different compared to our discussion on the homework. Initially I had included all controls, rather than just batch controls in the differential expression test. This feels as though it changes the message from before, but it's closer to what we expect. Most experiments are roughly similar, but there are many (HMBOX1 as an example), where there is just not enough data in the 4 experiments to have a confident estimation of gene counts and variances in the conditions.
+
+```{r}
+ggplot(de.summary, aes(x = all, y = one)) + geom_point() +
+  geom_abline(slope = 1, intercept = 0) + 
+  geom_text_repel(data = subset(de.summary, !is.na(genes)), 
+                  aes(label = genes),
+                  size = 5,
+                  box.padding = unit(0.35, "lines"),
+                  point.padding = unit(0.3, "lines"),
+                  col = "red",
+                  min.segment.length = 0.0) +
+  scale_x_log10("Full Data Set", limits = c(1, NA)) +
+  scale_y_log10("Individual Transcription Factor", limits = c(1, NA)) +
+  ggtitle("Number of Differentially Expressed Genes") +
+  theme_classic() +
+  coord_fixed()
+```
+
+## Transcription factors regulated by other Transcription Factors
+
+Here we can examine which transcription factors that were investigated by the experiment were disregulated in response to the the knockdown of another transcription factor in the experiment. Many of these will have their expression changed by the complex interaction of the gene regulatory networks of the cell, and may not be directly targeted by the knocked down transcription factor, but it's interesting to see at least how many there are.
+
+We can also check the results for TEAD2 (or any transcription factor, really) in more detail.
+
+```{r}
+number_tfs_upregulated <- res.obj %>% 
+  filter(row %in% model.matrix$crispri_geneid) %>% 
+  filter(padj < 0.05) %>% 
+  group_by(experiment) %>%
+  filter(log2FoldChange > 0) %>% 
+  summarise(n = n()) %>%
+  arrange(-n)
+
+number_tfs_upregulated %>% 
+  filter(experiment %in% (de.summary %>% 
+                            filter(!is.na(genes)) %>% 
+                            pull(experiment)))
+
+number_tfs_downregulated <- res.obj %>% 
+  filter(row %in% model.matrix$crispri_geneid) %>% 
+  filter(padj < 0.05) %>% 
+  group_by(experiment) %>% 
+  filter(log2FoldChange < 0) %>% 
+  summarise(n = n()) %>%
+  arrange(-n)
+
+number_tfs_downregulated %>% 
+  filter(experiment %in% (de.summary %>% 
+                            filter(!is.na(genes)) %>% 
+                            pull(experiment)))
+```
+
+
+Here we examine TEAD2 more closely
+
+```{r}
+res.obj %>% 
+  filter(row %in% model.matrix$crispri_geneid) %>% 
+  filter(padj < 0.05) %>%
+  filter(experiment == "treatment_TEAD2_vs_CRISPRi_CONTROL")
+
+number_tfs_upregulated %>% 
+  filter(experiment == "treatment_TEAD2_vs_CRISPRi_CONTROL")
+
+number_tfs_downregulated %>% 
+  filter(experiment == "treatment_TEAD2_vs_CRISPRi_CONTROL")
+```
+
+## Essential Genes and DEPMAP
+
+In order to investigate one potential differentiator leading to the wide range of differential expression measured in each kockdown, I downloaded the data from depmap which evalutates the essentiality of many genes by CRISPR in many cell lines.
+
+Depmap can be found here: https://depmap.org/portal/
+
+and K562, our cell line can be found here: https://depmap.org/portal/cell_line/ACH-000551?tab=mutation
+
+We make a note that *K562* is identified as `ACH-000551` within depmap so that we can filter cell type specific data from the larger data set.
+
+All of the data that backs up the analysis on depmap is availble for download, So I decided to download the gene dependency file which is found here:
+https://depmap.org/portal/download/all/?release=DepMap+Public+20Q2&file=Achilles_gene_dependency.csv
+
+and structured like this:
+```
+Probability that knocking out the gene has a real depletion effect using gene_effect.
+    Columns: genes in the format “HUGO (Entrez)”
+    Rows: cell lines (Broad IDs)
+```
+
+```{r}
+essentiality.genes <- readr::read_csv(file.path(course_directory, "data/Achilles_gene_dependency.csv"))
+
+essentiality.genes <- essentiality.genes %>% 
+  pivot_longer(-X1, names_to = "genes", values_to = "score") %>%
+  dplyr::rename(cell_type = X1)
+
+head(essentiality.genes)
+```
+
+We will have to filter for just our cell_type and also transform the "genes" field so that we have only the gene names that we are interested in.
+
+```{r}
+k562.essentiality <- essentiality.genes %>% 
+  filter(cell_type == "ACH-000551") %>% 
+  tidyr::separate(genes, into = c("name", "id")) %>% 
+  filter(name %in% levels(model.matrix$treatment))
+
+head(k562.essentiality)
+```
+
+We can now finally compare the `score` from this dataset, which represents the "probability that knocking out the gene has a real depletion effect", with either the number of genes that were differentially expressed by knocking down that gene, or the log2FC of the gene that was attempted to be knocked down.
+
+In both plots we highlight your selected genes in red and the genes with a >95% chance of having a real depletion effect, or being essential in green.
+```{r}
+essential.summary <- de.summary %>% 
+  separate(experiment, into = c("foo", "name", "bar"), sep = "_") %>% 
+  select(-c("foo", "bar")) %>%
+  left_join(k562.essentiality)
+
+head(essential.summary)
+
+ggplot(essential.summary, aes(x = all, y = score)) + 
+  geom_point() +
+  geom_text_repel(data = subset(essential.summary, !is.na(genes)), 
+                  aes(label = name),
+                  size = 5,
+                  box.padding = unit(0.35, "lines"),
+                  point.padding = unit(0.3, "lines"),
+                  col = "red",
+                  min.segment.length = 0.0) +
+  geom_text_repel(data = subset(essential.summary, score >= 0.95 & is.na(genes)), 
+                  aes(label = name),
+                  size = 5,
+                  box.padding = unit(0.35, "lines"),
+                  point.padding = unit(0.3, "lines"),
+                  col = "darkgreen",
+                  min.segment.length = 0.0) +
+  scale_y_continuous("Probability of Being Essential in K562 (DEPMAP CRISPR screens)") +
+  scale_x_continuous("Full Data Set Number of DEGs")
+```
+
+```{r}
+essential.summary.effect <- res.obj %>% 
+  separate(experiment, into = c("foo", "treatment", "bar"), sep = "_") %>% 
+  select(-c("foo", "bar")) %>% 
+  left_join(model.matrix) %>% 
+  filter(row == crispri_geneid) %>% 
+  group_by(treatment) %>%
+  top_n(1, samples) %>%
+  left_join(essential.summary, by = c("treatment" = "name"))
+
+ggplot(essential.summary.effect, aes(x = log2FoldChange, y = score)) + 
+  geom_point() +
+  geom_text_repel(data = subset(essential.summary.effect, !is.na(genes)), 
+                  aes(label = treatment),
+                  size = 5,
+                  box.padding = unit(0.35, "lines"),
+                  point.padding = unit(0.3, "lines"),
+                  col = "red",
+                  min.segment.length = 0.0) +
+  geom_text_repel(data = subset(essential.summary.effect, score >= 0.95 & is.na(genes)), 
+                  aes(label = treatment),
+                  size = 5,
+                  box.padding = unit(0.35, "lines"),
+                  point.padding = unit(0.3, "lines"),
+                  col = "darkgreen",
+                  min.segment.length = 0.0) +
+  scale_y_continuous("Probability of Being Essential in K562 (DEPMAP CRISPR screens)") +
+  scale_x_continuous("log2FC in CRISPRi")
+```
+
+## Examining the effect of setting a fold change cutoff
+
+```{r}
+tead.metadat <- rbind(
+  subset(model.matrix, treatment == 'TEAD2'),
+  subset(
+    subset(model.matrix, treatment == 'CRISPRi_CONTROL'),
+    batch %in% "B")
+)
+
+tead.metadat$treatment <- relevel(tead.metadat$treatment, "CRISPRi_CONTROL")
+
+dds.tead <- DESeqDataSetFromMatrix(countData = count.matrix[, tead.metadat$samples],
+                                   colData = tead.metadat,
+                                   design = ~treatment)
+dds.tead <- DESeq(dds.tead, 
+                  parallel = TRUE, 
+                  BPPARAM = BiocParallel::MulticoreParam(workers = 8))
+```
+
+We can plot the results both ways and see a remarkable change in what is called significant or not. 
+```{r}
+res.tead <- results(dds.tead, name = resultsNames(dds.tead)[[2]])
+plotMA(res.tead, alpha = 0.05, main = "No log2 Fold Change Cutoff")
+abline(h = 1); abline(h = -1)
+significant.highlfc <- res.tead[abs(res.tead$log2FoldChange) > 1 & res.tead$padj < 0.05 & !is.na(res.tead$padj), ]
+
+res.tead.lfc <- results(dds.tead, name = resultsNames(dds.tead)[[2]], lfcThreshold = 1)
+plotMA(res.tead.lfc, alpha = 0.05, main = "abs(log2 Fold Change) > 1")
+abline(h = 1); abline(h = -1)
+significant.highlfc.threshold <- res.tead.lfc[abs(res.tead.lfc$log2FoldChange) > 1 & res.tead.lfc$padj < 0.05 & !is.na(res.tead.lfc$padj), ]
+```
+
+It becomes clearer that the test doesn't simply threshold the results at a specified log2 Fold change, but rather test that the log2 fold changes are greater in absolute value than a given threshold.
+
+So now we can check three example genes. The most significantly differentially expressed gene in both sets (TEAD2, unsurprisingly), the gene with the lowest absolute log2FC found significant in the thresholded dataset (PGAP6) and the gene with the highest absolute log2FC not found signficantly differentially expressed in the thresholded data set.
+
+```{r}
+significant.highlfc.threshold[order(abs(significant.highlfc.threshold$log2FoldChange)), ]
+
+non_signifcant_at_cutoff <- significant.highlfc[which(!rownames(significant.highlfc) %in% rownames(significant.highlfc.threshold) & 
+                                                        rownames(significant.highlfc) %in% rownames(res.tead.lfc[!is.na(res.tead.lfc$padj),])),]
+non_signifcant_at_cutoff[order(abs(non_signifcant_at_cutoff$log2FoldChange)), ]
+
+res.tead.lfc[c("ENSG00000129925", "ENSG00000277027", "ENSG00000074219"),]
+res.tead[c("ENSG00000129925", "ENSG00000277027", "ENSG00000074219"),]
+
+d <- plotCounts(dds.tead, gene="ENSG00000074219", intgroup="treatment", 
+                returnData=TRUE)
+ggplot(d, aes(x=treatment, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_continuous(limits = c(1, NA)) +
+  coord_trans(y = "log2") +
+  ggtitle("ENSG00000074219 (TEAD2) - significant in both")
+
+
+d <- plotCounts(dds.tead, gene="ENSG00000129925", intgroup="treatment", 
+                returnData=TRUE)
+ggplot(d, aes(x=treatment, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_continuous(limits = c(1, NA)) +
+  coord_trans(y = "log2") +
+  ggtitle("ENSG00000129925 (PGAP6) - lowest log2FC significant with threshold")
+
+d <- plotCounts(dds.tead, gene="ENSG00000277027", intgroup="treatment", 
+                returnData=TRUE)
+ggplot(d, aes(x=treatment, y=count)) + 
+  geom_point(position=position_jitter(w=0.1,h=0)) + 
+  scale_y_continuous(limits = c(1, NA)) +
+  coord_trans(y = "log2") +
+  ggtitle("ENSG00000277027 (RMRP) - highest log2FC non-significant with threshold")
+```
