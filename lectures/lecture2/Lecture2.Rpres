@@ -108,14 +108,14 @@ A Word About Distributions
 ========================================================
 
 - Most data, in a _controlled experimental setting_, fit some distribution, often the normal dist.
-- However, most biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
+- However, many biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
 ![](distribution_zoo.png)
 
 A Word About Distributions
 ========================================================
 
 - Most data, in a _controlled experimental setting_, fit some distribution, often the normal dist.
-- However, most biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
+- However, many biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
 - It is important to understand the distribution underlying the experiment, as the parameters can be related to the _**data-generating process**_.
 
 ![](distribution_zoo.png)
@@ -124,7 +124,7 @@ A Word About Distributions
 ========================================================
 
 - Most data, in a _controlled experimental setting_, fit some distribution, often the normal dist.
-- However, most biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
+- However, many biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
 - It is important to understand the distribution underlying the experiment, as the parameters can be related to the _**data-generating process**_.
 - The underlying assumption in experiments comparing treatment _vs._ control is that the distributions are the same, and the observed distribution parameters reflect systematic biases (experimental error)
 
@@ -134,7 +134,7 @@ A Word About Distributions
 ========================================================
 
 - Most data, in a _controlled experimental setting_, fit some distribution, often the normal dist.
-- However, most biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
+- However, many biological, ecological, epidemiological data, fit other distributions. [Explore these in the distribution zoo](https://ben18785.shinyapps.io/distribution-zoo/)
 - It is important to understand the distribution underlying the experiment, as the parameters can be related to the _**data-generating process**_.
 - The underlying assumption in experiments comparing treatment _vs._ control is that the distributions are the same, and the observed distribution parameters reflect systematic biases (experimental error)
 - _Some DEA violate these assumptions_, and you should be aware of this when choosing an analysis strategy and interpreting the results.

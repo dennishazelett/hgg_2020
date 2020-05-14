@@ -1,0 +1,287 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
+Lecture 3 Exploratory and Principle Components Analysis
+========================================================
+author: Dennis Hazelett
+date: 5/12/2020
+autosize: true
+transition: fade
+```{r setup, include=FALSE}
+Sys.getenv("HOME") # see where your home directory is
+course_directory <- file.path(Sys.getenv("HOME"), "repos", "hgg_2020")
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(ggridges)
+library(knitr)
+opts_chunk$set(cache=TRUE, fig.width=18, fig.height=6)
+```
+
+
+statistical _vs._ probabalistic models
+========================================================
+Last lecture we talked about different types of analyses
+* fitting data to model
+* fitting model to data
+
+statistical _vs._ probabalistic models
+========================================================
+Last lecture we talked about different types of analyses
+* fitting data to model -- "statistical models"
+* fitting model to data -- "probabalistic models"
+
+statistical _vs._ probabalistic models
+========================================================
+Last lecture we talked about different types of analyses
+* fitting data to model -- "statistical models"
+* fitting model to data -- "probabalistic models" - "generative"
+
+Approaching a generative model of count data for RNA-seq
+========================================================
+
+Suppose we flip a coin (Bernoulli distribution)
+
+![](single_coin_flip.jpg)
+
+```{r gene-counts, echo = TRUE}
+rbinom(n=10, size = 1, prob=0.5)
+```
+
+Genes according to the binomial distribution
+========================================================
+
+Apply bernoulli logic to count data in RNA-seq
+
+![](single_coin_flip.jpg)
+
+```{r coin-flip, echo = TRUE}
+rbinom(n=1, size = 4e07, prob=1e-05) # 40m reads, 10 CPM
+```
+
+poisson distribution
+========================================================
+class: small-code
+
+Apply bernoulli logic to count data in RNA-seq
+
+![](many-coins.jpg)
+```{r many_coins, echo = TRUE}
+ngenes <- 2e04 # 20,000 protein coding genes
+gene_expr <- rbeta(ngenes, 1, 1 + ngenes)
+```
+
+poisson distribution (cont'd)
+========================================================
+class: small-code
+
+Apply bernoulli logic to count data in RNA-seq
+
+```{r expr_prob_graph_pois, echo = TRUE}
+ngenes <- 5.8e04 # 58,000 coding genes
+gene_expr <- rbeta(ngenes, 1, 1 + ngenes)
+hist(gene_expr)
+```
+
+poisson distribution (cont'd)
+========================================================
+class: small-code 
+
+Simulating count data using poisson
+
+key parameter: lambda (also called the "rate" parameter; lambda = p * total_obs)
+
+```{r sim_pois_coins, eval = FALSE, echo = TRUE}
+read_depth <- 4e07 # 40m reads
+expr_level <- rpois(n=ngenes, lambda = gene_expr * read_depth)
+sim_genes_1 <- data.frame(gene_id = 1:ngenes, expr_level)
+expr_vals_plot <- ggplot(sim_genes_1, aes(x=expr_level)) + geom_histogram()
+```
+
+graph of poisson simulated counts
+========================================================
+class: small-code 
+
+```{r sim_pois_coins_plot, eval = TRUE, echo = TRUE}
+read_depth <- 4e07 # 40m reads
+expr_level <- rpois(n=ngenes, lambda = gene_expr * read_depth)
+sim_genes_1 <- data.frame(gene_id = 1:ngenes, expr_level)
+expr_vals_plot <- ggplot(sim_genes_1, aes(x=expr_level)) + geom_histogram()
+expr_vals_plot
+```
+
+What about real data???
+========================================================
+class: small-code
+
+Let's look at some of our CRISPRi data:
+
+```{r head-tead2-counts}
+tead2counts <- read.csv(file = "~/repos/hgg_2020/data/teadfeatcounts.csv", row.names="Geneid")
+head(tead2counts)
+```
+
+
+What about real data???
+========================================================
+class: small-code 
+
+How are these data distributed?
+
+```{r read-depths}
+colSums(tead2counts)
+```
+
+What about real data???
+========================================================
+class: small-code
+
+How are these data distributed?
+
+```{r sample-density}
+ggplot(gather(tead2counts, key = 'sample', value = 'expression'), aes(y = sample, x = expression)) + geom_density_ridges()
+```
+
+What about real data???
+========================================================
+class: small-code 
+
+Log scale reveals problems
+
+```{r log-sample-density}
+ggplot(gather(tead2counts, key = 'sample', value = 'expression'), 
+       aes(y = sample, x = expression + 1)) + 
+  geom_density_ridges() + scale_x_log10() + theme_minimal() + 
+  theme(text = element_text(size=20))
+sum(rowSums(tead2counts)==0)
+```
+
+What about real data???
+========================================================
+class: small-code
+Filter low or non-existent genes:
+
+```{r log-sample-dens-filtered}
+ggplot(gather(tead2counts[rowSums(tead2counts)>0,], key = 'sample', value = 'expression'), 
+       aes(y = sample, x = expression + 1)) + 
+  geom_density_ridges() + scale_x_log10() + theme_minimal() + 
+  theme(text = element_text(size=20))
+```
+
+What about real data???
+========================================================
+class: small-code
+Filter low or non-existent genes:
+
+```{r log-sample-dens-stringent-filtered}
+ggplot(gather(tead2counts[rowSums(tead2counts)>4,], key = 'sample', value = 'expression'), 
+       aes(y = sample, x = expression + 1)) + 
+  geom_density_ridges() + scale_x_log10() +  theme_minimal() + 
+  theme(text = element_text(size=20))
+
+```
+
+Exploration of DEA results
+========================================================
+class: small-code
+
+```{r expression-data-view, echo = FALSE}
+maframe <- read.csv('~/repos/hgg_2020/data/TEAD2_DEA_0p5cutoff_results_files/treatment_TEAD2_vs_CRISPRi_CONTROL.csv')
+head(maframe)
+```
+
+The M-A plot
+========================================================
+class: small-code
+
+- M: Log Fold Change
+- A: Expression Level
+
+smaller absolute differences lead to larger LFC at the low end
+
+```{r maplot}
+ggplot(maframe, aes(x = baseMean, y = log2FoldChange)) + 
+  geom_point(alpha = 0.05) + xlab("A") + ylab("M") + scale_x_log10() + theme_minimal() + 
+  theme(text = element_text(size=20))
+```
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar to binomial, but models 0 counts or "failures" rather than successes
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar idea to binomial, but models 0 counts or "failures" rather than successes
+- Poisson breaks down when variance >> mean
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar idea to binomial, but models 0 counts or "failures" rather than successes
+- Poisson breaks down when variance >> mean
+- Alternative parameterization includes size or "dispersion" parameter
+
+What about the DESeq2 model?
+========================================================
+- Uses the negative bionomial distribution
+- Similar idea to binomial, but models 0 counts or "failures" rather than successes
+- Poisson breaks down when variance >> mean
+- Alternative parameterization includes size or "dispersion" parameter
+- Dispersion is a property of each gene which can be fit to the data
+
+Gene-wise Dispersion Estimates (DESeq2)
+========================================================
+![](tead2_dispersion.png)
+
+
+Gene-wise Dispersion Estimates (DESeq2)
+========================================================
+![](all_experiments_dispersion.png)
+
+Fundamentals of Principle Components Analysis
+========================================================
+
+[Nat Biotechnol. 2008 Mar;26(3):303-4](https://www.nature.com/articles/nbt0308-303)
+
+![](PCA_fig1.png)
+
+Each dot represents a breast cancer sample plotted against its expression levels for two genes.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig2.png)
+
+PCA identifies the two directions (PC1 and PC2) along which the data have the largest spread.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig3.png)
+
+Samples plotted in one dimension using their projections onto the first principal component (PC1) for ER+, ER– and all samples separately.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig4.png)
+
+The variance of the principal components when PCA is applied to all 8,534 genes with
+expression levels for all samples.
+
+Fundamentals of Principle Components Analysis
+========================================================
+![](PCA_fig5.png)
+
+Samples colored according to ERBB2 status (blue, ERBB2+;
+brown, ERBB2 – ; green, unknown
+
+t-SNE & UMAP: reducing multidimensional analysis to 2D
+========================================================
+![](t-SNE.png)

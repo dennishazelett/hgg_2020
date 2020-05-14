@@ -1,0 +1,175 @@
+---
+title: 'Assignment 3: Exploratory analysis and PCA'
+output:
+  html_document:
+    df_print: paged
+date: "due May 19, 2020"
+---
+
+```{r setup, include=FALSE}
+Sys.getenv("HOME") # see where your home directory is
+course_directory <- file.path(Sys.getenv("HOME"), "repos", "hgg_2020")
+course_directory # double check what you set your course_directory to
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root.dir = course_directory)
+```
+
+## Objective
+
+In this lab we are going to try some of the exploratory analysis and PCA we discussed during lecture 3. This homework is an R notebook in .Rmd format, so you can alter the code as necessary. Answers can be entered directly where indicated.
+
+### Exercise 1: 
+
+First, let's read in our feature counts:
+
+```{r read-in, echo=TRUE}
+# don't forget to change the variable names so they don't invoke the example, TEAD2
+tead2counts <- read.csv(
+  file = file.path(course_directory, "data", "teadfeatcounts.csv"), 
+  stringsAsFactors = FALSE,
+  row.names = 1) # alter file path as needed
+```
+
+Using base graphics in R, visualize the distribution of counts from column 1 as a density plot:
+
+```{r density-col-1, echo=TRUE}
+plot(density(tead2counts[,1]))
+```
+
+Use the ``points`` function to add the second pair of replicates to this graph (pick a different color, obviously!). Note the arguments list is identical to the scatterplot referenced by the base ``plot`` function:
+
+```{r scatter-replicates, echo=TRUE}
+plot(x = log2(tead2counts[,1]), y = log2(tead2counts[,3]), col = rgb(1, .4, 0, alpha = 0.01), pch = 16,
+     ## these arguments do not need to be included with points:
+     xlab = "TEAD2",
+     ylab = "CRISPRi_CONTROL")
+
+# points() # <-- add your code here
+```
+
+Use the ggridges library of ggplot to display the distributions simultaneously as density plots:
+
+```{r rnaseq-density-plots}
+### Install ggridges, if necessary:
+### BiocManager::install("ggridges")
+library(ggridges)
+library(tidyverse)
+
+distr_plot <- ggplot(gather(tead2counts, key = "sample_id", value = "expression")) # +
+#   geom_density_ridges(aes()) + ## needs aes() args
+#   scale_x_log10() ## etc
+
+distr_plot
+```
+
+## Exercise 2: the M-A plot & volcano
+
+Next let's look at your DEA results from GENAVi.
+
+```{r upload-dea-result, echo=TRUE}
+dea <- read.csv(file = file.path(course_directory, "data", "TEAD2_DEA_0p5cutoff_results_files", "treatment_TEAD2_vs_CRISPRi_CONTROL.csv"))
+knitr::kable(head(dea))
+```
+
+```{r dea-obj, echo=TRUE, results=TRUE}
+head(dea)
+```
+
+1. Using whatever method is easiest (base graphics or ggplot), generate an M-A plot using your dea set from GENAVi:
+
+```{r ex2.1-MA}
+### plot(y = dea$log2FoldChange...  etc etc)
+```
+
+2. Generate a volcano plot from the same data frame.
+
+```{r ex2.2-volcano}
+### plot(x = dea$log2FoldChange... etc etc)
+```
+
+## Exercise 3: Principle Components Analysis
+
+Our goal is to give you some conceptual basis to understand what is happening in a Principle components analysis to help guide you in interpretation. In addition to this week's lecture and the [reading material](https://www.nature.com/articles/nbt0308-303) you may find this video helpful:
+
+<iframe width="590" height="332" src="https://www.youtube.com/embed/FgakZw6K1QQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Open a new GENAVi window and load your data and metadata files via the <span style="color:blue">Gene Expression</span> and <span style="color:blue">Differential Expression Analysis</span> tabs as you did in the previous labs. **Note you may need to run this command from a separate instance of R in a terminal so that you can continue to interact with this notebook**:
+
+```{r open-genavi, echo=TRUE, eval=FALSE}
+shiny::runGitHub("alpreyes/GENAVi")
+```
+
+To run PCA or any of the functions from the <span style="color:blue">Visualization</span> tab you need to select some genes. Under the <span style="color:blue">Gene selection</span> menu you _could_ select <span style="color:blue">Select 1000 genes of highest variance</span> but we will ignore that for now.
+
+1. Create a gene list of your differentially expressed genes from Lab 2. There are many ways to do this; here is an example for the `dea` object we created in the exercise above:
+
+```{r deg-list}
+sig_genes <- with(dea, log2FoldChange - lfcSE > 0.5)
+write.table(
+  dea[sig_genes, ]$Symbol, 
+  file = file.path(course_directory, "data", "tead_sig_genes.csv"),
+  row.names = FALSE,
+  col.names = FALSE,
+  quote = FALSE)
+```
+
+On the <span style="color:blue">Gene Expression</span> tab upload your genelist via the <span style="color:blue">Gene selection</span> menu. Now click on the <span style="color:blue">Visualization</span> tab. It may take a minute to render. Once the heatmap is generated, click on the <span style="color:blue">PCA plots</span> button. Choose <span style="color:blue">Selected genes</span> from the PCA Genes menus. Download a copy of the image and link it below.
+
+![](smiley.jpg)
+
+Now go back to the gene expression tab and select <span style="color:blue">Deselect all genes</span> from the <span style="color:blue">Gene selection</span> menu. Then search for your target gene (or any gene of interest). Select some number of genes (at least 3). Return to the <span style="color:blue">Visualization</span> tab and make sure <span style="color:blue">PCA genes >> Selected genes</span> is selected. Link your image here:
+
+![](smiley.jpg)
+
+### Questions for exercise 3
+
+1. Describe the major differences you see in the two plots above.
+
+<span style="color:#31a354"><i><b>
+Replace this text with your answer
+</b></i></span>
+
+2. Why are the axes different?
+
+<span style="color:#31a354"><i><b>
+Replace this text with your answer
+</b></i></span>
+
+3. What is the largest number of principle components you can have?
+
+<span style="color:#31a354"><i><b>
+Replace this text with your answer
+</b></i></span>
+
+4. Why does GENAVi provide the capability of generating an HTML report? Change the color of the **_best_** answer choice below to red. Some answer choices are true but not best.
+
+<span style="color:#31a354"><i><b>
+a. To throw your P.I. off the scent.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+b. For publication purposes.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+c. For troubleshooting your analysis.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+d. To help you learn to write code.
+</b></i></span>
+
+
+## Exercise 4: t-SNE
+
+Watch this.
+
+<iframe width="590" height="332" src="https://www.youtube.com/embed/NEaUSP4YerM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Question for exercise 4.
+
+1. Is t-SNE necessary for a single CRISPRi experiment with 4 samples and a single contrast? Why or why not?
+
+<span style="color:#31a354"><i><b>
+Replace this text with your answer
+</b></i></span>
