@@ -249,35 +249,35 @@ Gene-wise Dispersion Estimates (DESeq2)
 
 Fundamentals of Principle Components Analysis
 ========================================================
-
 [Nat Biotechnol. 2008 Mar;26(3):303-4](https://www.nature.com/articles/nbt0308-303)
 
-![](PCA_fig1.png)
+<img src = "PCA_fig1.png", style="width:500px;height:400px;">
 
 Each dot represents a breast cancer sample plotted against its expression levels for two genes.
 
 Fundamentals of Principle Components Analysis
 ========================================================
-![](PCA_fig2.png)
+<img src = "PCA_fig2.png", style="width:500px;height:480px;">
 
 PCA identifies the two directions (PC1 and PC2) along which the data have the largest spread.
 
 Fundamentals of Principle Components Analysis
 ========================================================
-![](PCA_fig3.png)
+<img src = "PCA_fig3.png", style="width:500px;height:440px;">
 
 Samples plotted in one dimension using their projections onto the first principal component (PC1) for ER+, ER– and all samples separately.
 
 Fundamentals of Principle Components Analysis
 ========================================================
-![](PCA_fig4.png)
+<img src = "PCA_fig4.png", style="width:500px;height:440px;">
 
 The variance of the principal components when PCA is applied to all 8,534 genes with
 expression levels for all samples.
 
 Fundamentals of Principle Components Analysis
 ========================================================
-![](PCA_fig5.png)
+<img src = "PCA_fig5.png", style="width:500px;height:440px;">
+
 
 Samples colored according to ERBB2 status (blue, ERBB2+;
 brown, ERBB2 – ; green, unknown
