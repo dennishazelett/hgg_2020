@@ -179,6 +179,30 @@ ggplot(pmfprobs) +
   ggtitle("Probability Mass Function (m=15, n=45)")
 ```
 
+Hypergeometric distribution
+========================================================
+class: small-code
+(PMF = "**P**robability **M**ass **F**unction)
+
+```{r pmf-code, eval=FALSE}
+library("dplyr")
+library("ggplot2")
+library("foreach")
+library("RColorBrewer")
+## 
+x = c(0, 1, 2, 4, 8, 11, 14, 15)
+k = 1:59
+pmfprobs <- foreach(i = x, .combine = 'rbind') %do% data.frame(x=rep(i, length(k)), k, p = dhyper(i, 15, 45, k))
+ggplot(pmfprobs) + 
+  geom_point(aes(x = k, y = p, colour = factor(x))) +
+  geom_line(aes(x = k, y = p, colour = factor(x))) +
+  scale_color_brewer(palette="Dark2", name = "successes") +
+  ylab("probability") +
+  theme_minimal() +
+  theme(text = element_text(size=24)) +
+  ggtitle("Probability Mass Function (m=15, n=45)")
+```
+
 Hypergeometric distribution: code
 ========================================================
 class: small-code
@@ -503,3 +527,8 @@ Finally: A word about the construction and limitations of all ontologies
 
 - this is how genes relate to multiple terms
 - the usefulness of GO terms varies _greatly_ throughout the graph
+
+Example of bias in ontology enrichment analysis
+========================================================
+
+<img src="GOrilla.png", style="width:800px;height:400px;"></img>
