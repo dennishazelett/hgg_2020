@@ -326,22 +326,11 @@ suppose we have 2 sets of observations:
 ### sample with replacement
 ### population unknown in both cases
 
-What about general enrichment problems? 
-========================================================
-suppose we have 2 sets of observations:
-
-- one is **control** condition
-- one is **alternative** condition
-- each observation is a "draw" as in hypergeo, but now
-
-### sample with replacement
-### population unknown in both cases
-
 General Enrichment Calculation
 ========================================================
 class: small-code
 
-What is the probability of findin a read in a given gene (random draw), given the data
+What is the probability of finding a read in a given gene (random draw), given the data
 
 ```{r beta-rna-seq}
 plot(density(rbeta(1e5, 234, 4e7)), xlim=c(0,0.0001))
@@ -531,4 +520,4 @@ Finally: A word about the construction and limitations of all ontologies
 Example of bias in ontology enrichment analysis
 ========================================================
 
-<img src="GOrilla.png", style="width:800px;height:400px;"></img>
+<img src="GOrilla.png", style="width:800px;height:500px;"></img>
