@@ -1,0 +1,126 @@
+---
+title: "Lab 4: Enrichment"
+output: html_notebook
+date: "due 05/26/2020"
+---
+
+```{r setup, include=FALSE}
+Sys.getenv("HOME") # see where your home directory is
+course_directory <- file.path(Sys.getenv("HOME"), "repos", "hgg_2020")
+course_directory # double check what you set your course_directory to
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root.dir = course_directory)
+```
+
+## Objective
+
+In this assignment we are going to try some hands on calculations of common enrichment problems using the distributions we discussed during lecture. Secondly, we will test the functionality for Gene Set Enrichment and ORA in GENAVi.
+
+### Exercise 1:
+
+Suppose there is a genome with 20,051 genes. You've just completed an RNA-seq cell-culture study in which you found 283 genes were upregulated in response to application of a drug. Of these genes 6 belong to a molecular pathway "Response to hypoxia" that also contains an additional 48 genes. You would like to determine whether this constitutes enrichment.
+
+#### Question 1.1
+
+Is the probability of drawing a gene from this pathway known?
+
+<span style="color:#31a354"><i><b>
+Your answer here.
+</b></i></span>
+
+#### Question 1.2
+
+This enrichment calculation involves (highlight the correct answer in red)
+
+<span style="color:#31a354"><i><b>
+a. A finite population of known size and composition.
+</b></i></span>
+
+<span style="color:#31a354"><i><b>
+b. Estimation of probability from the beta distribution.
+</b></i></span>
+
+#### Question 1.3
+
+What method should you use to calculate enrichment in this case?
+
+<span style="color:#31a354"><i><b>
+Your answer here.
+</b></i></span>
+
+#### Question 1.4
+
+Please perform an appropriate calculation using the method you chose in answer to question 1.3 below:
+
+```{r q1.4, echo=TRUE}
+########  enter your code below, do not erase this line
+
+########  do not erase this line
+```
+
+### Exercise 2
+
+Suppose your lab burns down before you could finish the experiment and you only have a single replicate. One candidate gene of interest, `drg-1` (drug response gene 1), has the following expression data (as raw counts).
+
+|           | drg-1 | library depth |
+| :-------- | :---- | :------------ |
+| treatment | 493   | 43170301      |
+| control   | 410   | 58456291      |
+
+#### Question 2.1
+
+What is the likely CPM of the gene in the treatment replicate, with $95\%$ confidence interval? (Hint: use the beta distribution (rbeta function) to determine probability mass and then use the quantile function to set the bounds on $2.5\%$ and $97.5\%$ quantiles. Don't forget to convert units to CPM)
+
+```{r q2.1, echo=TRUE}
+########  enter your code below, do not erase this line
+
+########  do not erase this line
+```
+
+
+#### Question 2.2
+
+What is the expression difference between treatment and control, with $95\%$ confidence interval, in CPM?
+
+```{r q2.2, echo=TRUE}
+########  enter your code below, do not erase this line
+
+########  do not erase this line
+```
+
+#### Question 2.3
+
+What is the epression/$95\%$ confidence interval expressed in $log_{2} FC$?
+
+```{r q2.3, echo=TRUE}
+########  enter your code below, do not erase this line
+
+########  do not erase this line
+```
+
+### Exercise 3
+
+Open a GENAVi window, and load your DEA results from last week into the <span style="color:blue"><b>Enrichment analysis</b></span> tab.
+
+#### Question 3.1
+
+Execute an overrepresentation analysis (ORA) using Gene Ontology. Set fold change to 0.5 and try out all three categories and choose one of the results to include an image and discussion below.
+
+![](<your-image-here>)
+
+<span style="color:#31a354"><i><b>
+Discuss why you chose this and any interpretations you have.
+</b></i></span>
+
+
+#### Question 3.2
+
+Execute gene set enrichment analysis (GSEA) with Gene Ontology using the same category you chose for the previous exercise, and $-log_{10}(P-value) * sig(log_{2} FC)$ method. Include the result image here:
+
+(note: if your result set isn't producing anything with these settings, experiment with others and include in your discussion notes below)
+
+![](<your-image-here>)
+
+<span style="color:#31a354"><i><b>
+Add your discussion notes.
+</b></i></span>
