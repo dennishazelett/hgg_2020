@@ -232,7 +232,7 @@ class: small-code
 - Question: draw 10 (k), obtain 3 (q); **how likely is $\geq 3$?**
 
 ```{r example-one-run}
-phyper(3, 20, 80, 10, lower.tail = FALSE, log.p = FALSE)
+phyper(2, 20, 80, 10, lower.tail = FALSE, log.p = FALSE)
 ```
 
 Hypergeo example
@@ -249,7 +249,7 @@ probability = phyper(q=q, m=20, n=80, k=10, lower.tail=FALSE)
 plot(q, probability, xlab = "probability in right tail", pch=16)
 lines(q, probability)
 abline(h = 0.05, lty = 2, col = 'red')
-abline(v = 3, col = 'blue')
+abline(v = 2, col = 'blue')
 ```
 
 Hypergeo example
@@ -355,7 +355,7 @@ Controls: A:B = 48:186
 
 ```{r beta-splicing}
 # probability of observing form A in controls
-plot(density(rbeta(1e5, 48, 234-48)), xlim=c(0,1), main="splicing example")
+plot(density(rbeta(1e5, 48, 186)), xlim=c(0,1), main="splicing example")
 ```
 
 General Enrichment Calculation
@@ -366,7 +366,7 @@ New Condition: observe 24 A, 47 B
 
 ```{r beta-splicing-observe}
 # probability of observing form A in controls
-plot(density(rbeta(1e5, 48, 234-48)), xlim=c(0,1), main="splicing example")
+plot(density(rbeta(1e5, 48, 186)), xlim=c(0,1), main="splicing example")
 lines(density(rbeta(1e5, 24, 47)))
 ```
 
@@ -378,7 +378,7 @@ New Condition: observe 24 A, 47 B
 
 ```{r beta-splicing-diff}
 # probability of observing form A in controls
-plot(density(rbeta(1e5, 48, 234-48)), xlim=c(0,1), main="splicing example")
+plot(density(rbeta(1e5, 48, 186)), xlim=c(0,1), main="splicing example")
 lines(density(rbeta(1e5, 24, 47)))
 lines(density(rbeta(1e5, 24, 47)-rbeta(1e5, 48, 186)), lty=2, col='red')
 ```

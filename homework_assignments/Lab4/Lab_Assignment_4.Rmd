@@ -69,7 +69,7 @@ Suppose your lab burns down before you could finish the experiment and you only 
 
 #### Question 2.1
 
-What is the likely CPM of the gene in the treatment replicate, with $95\%$ confidence interval? (Hint: use the beta distribution (rbeta function) to determine probability mass and then use the quantile function to set the bounds on $2.5\%$ and $97.5\%$ quantiles. Don't forget to convert units to CPM)
+What is the likely CPM of the gene in the _treatment_ replicate, with $95\%$ confidence interval? (Hint: use the beta distribution (rbeta function) to determine probability mass and then use the quantile function to set the bounds on $2.5\%$ and $97.5\%$ quantiles. Don't forget to convert units to CPM)
 
 ```{r q2.1, echo=TRUE}
 ########  enter your code below, do not erase this line
@@ -80,7 +80,7 @@ What is the likely CPM of the gene in the treatment replicate, with $95\%$ confi
 
 #### Question 2.2
 
-What is the expression difference between treatment and control, with $95\%$ confidence interval, in CPM?
+What is the _expression difference_ between treatment and control, with $95\%$ confidence interval, in CPM?
 
 ```{r q2.2, echo=TRUE}
 ########  enter your code below, do not erase this line
@@ -90,7 +90,7 @@ What is the expression difference between treatment and control, with $95\%$ con
 
 #### Question 2.3
 
-What is the epression/$95\%$ confidence interval expressed in $log_{2} FC$?
+What is the epression/$95\%$ _confidence interval_ expressed in $log_{2} FC$?
 
 ```{r q2.3, echo=TRUE}
 ########  enter your code below, do not erase this line
