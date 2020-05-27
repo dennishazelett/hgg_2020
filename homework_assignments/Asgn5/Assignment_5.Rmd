@@ -1,0 +1,240 @@
+---
+title: "GSEA continued + File formats"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+Sys.getenv("HOME") # see where your home directory is
+course_directory <- file.path(Sys.getenv("HOME"), "repos", "hgg_2020")
+course_directory # double check what you set your course_directory to
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root.dir = course_directory)
+```
+
+# Objectives
+
+- gain a deeper understanding of GSEA through experimentation and simulation
+
+- review concepts from lecture on File formats
+
+
+## Simulated GSEA
+
+In the following code block, we are simulating a ranked genelist that has defined enrichment in the top part of the list. In our simulation, we want to look at how varying parameters such as the enrichment cutoff and magnitude of enrichment affect the resulting GSEA graph.
+
+Take some time to review the code below:
+
+```{r basemodel, eval=FALSE}
+
+# define parameters:
+cutoff <- 500 # 20 # number of top ranked genes with enrichment
+baseline <- 0.05 # fraction of total genes in pathway of interest
+enrich <- 0.3 # probability of pathway genes in top list
+ngenes <- 1e4 # total number of genes
+
+# simulate a dataset:
+if (baseline * cutoff < 1) {print("WARNING: baseline probability is too low")}
+top <- sample(c(rep(0, (1-enrich) * cutoff), rep(1, enrich * cutoff)), size = cutoff, replace = F)
+if (sum(top) <= baseline * ngenes) {
+  bot <- sample(c(rep(0, (1-baseline) * (ngenes - cutoff) + sum(top)), 
+                  rep(1, ngenes*baseline - sum(top))),
+                size = ngenes-cutoff, replace = F)
+  ranked_list <- c(top, bot)
+
+  ## create a vector to store enrichment scores:
+  escore <- numeric(ngenes)
+
+  ## iterate enrichment scores over the ranked list of genes:
+  for (i in 1:ngenes) {
+    expected = baseline * i
+    ## ENRICMENT FUNCTION:
+    escore[i] <- sum(ranked_list[1:i]) - expected
+  }
+  
+  # visualize the results:
+  plot(x=1:ngenes, y=escore, type='l', ylim=c(-cutoff/2, cutoff/2))
+  abline(h=0)
+} else {print("COULD NOT EVAL: NUM HITS IN TOP LIST GREATER THAN PATHWAY")}
+```
+
+### Question 1.1
+
+In your own words, describe how the enrichment function function works (lines 42-43). 
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
+With the current settings, what fold-enrichment is there for how many genes?
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
+### Question 1.2
+
+- Execute the code several more times by clicking the green arrow in the upper right of the code block in rstudio. How stable or unstable is the enrichment curve?
+
+- Try varying the cutoff parameter to increase the fraction of the list with probable enrichment. At what number does it become stable (_i.e._ consistently shows enrichment)? How do would you define enrichment?
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
+### Question 1.3
+
+-Try varying the enrichment parameter with a moderate sized list (cutoff=100). At what fold-enrichment (enrich $\div$ baseline) does the graph appear to be stably enriched?
+
+## Exercise 2
+
+Suppose we wanted to add a pvalue calculation using Fisher's exact test, using the code block below. <span style="color:red"><i><b>WARNING: THIS IS NOT HOW WE CALCULATE SIGNIFICANCE IN GSEA. IT IS FOR EXPLORATION PURPOSES ONLY. WE WILL TRY A SIGNIFICANCE CALCULATION IN EXERCISE 3.</b></i></span>
+
+
+```{r pvalues, eval=FALSE}
+
+# define parameters:
+cutoff <- 500 # 20 # number of top ranked genes with enrichment
+baseline <- 0.05 # fraction of total genes in pathway of interest
+enrich <- 0.15 # probability of pathway genes in top list
+ngenes <- 1e4 # total number of genes
+
+# simulate a dataset:
+if (baseline * cutoff < 1) {print("WARNING: baseline probability is too low")}
+top <- sample(c(rep(0, (1-enrich) * cutoff), rep(1, enrich * cutoff)), size = cutoff, replace = F)
+if (sum(top) <= baseline * ngenes) {
+  bot <- sample(c(rep(0, (1-baseline) * (ngenes - cutoff) + sum(top)), 
+                  rep(1, ngenes*baseline - sum(top))),
+                size = ngenes-cutoff, replace = F)
+  ranked_list <- c(top, bot)
+
+  ## create vectors to store enrichment scores and pvals:
+  escore <- numeric(ngenes)
+  epval  <- numeric(ngenes)
+  
+  ## iterate enrichment scores over the ranked list of genes:
+  for (i in 1:ngenes) {
+    expected = baseline * i
+    ## ENRICMENT FUNCTION:
+    escore[i] <- sum(ranked_list[1:i]) - expected
+    ### uncomment this section after completion of ex 2.2
+    epval[i] <- phyper(
+      q = sum(ranked_list[1:i])-1,
+      m = baseline*ngenes,
+      n = (1-baseline) * ngenes,
+      k = i,
+      lower.tail = F,
+      log.p = F
+    )
+    # epval[i] <- phyper(
+    #   ## REMINDER! the upper tail is non-inclusive
+    #   q = # enter code here & uncomment,
+    #   m = # enter code here & uncomment,
+    #   n = # enter code here & uncomment,
+    #   k = # enter code here & uncomment,
+    #   lower.tail = # enter code here & uncomment,
+    #   log.p = # enter code here & uncomment
+    # )
+  }
+  
+  # visualize the results:
+  plot(x=1:ngenes, y=escore, type='l', ylim=c(-cutoff/2, cutoff/2))
+  abline(h=0)
+} else {print("COULD NOT EVAL: NUM HITS IN TOP LIST GREATER THAN PATHWAY")}
+```
+
+### 2.1
+
+Alter the code block above with some parameters that appear to show clear enrichment from exercise 1.
+
+### 2.2
+
+Fix the part of the code pertaining to the pvalue calculation by adding arguments to the phyper function. Take a minute to review the code block below. After running the code below, are any of the calculated p values "significant"? 
+
+```{r significance1}
+print(cutoff)
+print(min(which(escore==max(escore))))
+print(epval[min(which(escore==max(escore)))])
+```
+
+### 2.3 
+
+After running the code above, are any of the calculated p values "significant"? 
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
+### 2.4 
+
+What do the three values tell you? Are you surprised by the second result? What conclusions can you draw? Is there a strong relationship between the cutoff and the highest point of enrichment?
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
+## Exercise 3 Significance Calculation
+
+Let's define a function to simulate a randomized dataset with the same general properties as defined above.
+
+```{r random-gsea-function}
+
+## calculates the maximum enrichment score of a random datasdet
+randscore <- function(ngenes, baseline) {
+  genes <- c(rep(1, baseline*ngenes), rep(0, ngenes-baseline*ngenes))
+  ranked_random_geneset <- sample(genes, size = ngenes, replace = F)
+  escore <- numeric(ngenes)
+  for (i in 1:ngenes) {
+    expected = baseline * i
+    ## ENRICMENT FUNCTION:
+    escore[i] <- sum(ranked_random_geneset[1:i]) - expected
+  }
+  max(escore)
+}
+
+```
+
+We can use this function to permute the range of scores we can expect with a pathway of size `ngenes * baseline`:
+
+```{r permute-distrib, eval=F}
+permutations <- 1000
+trialdata <- numeric(permutations)
+  
+for (i in 1:permutations) {
+  trialdata[i] <- randscore(ngenes = ngenes, baseline = baseline)
+}
+
+sigcount <- numeric(permutations)
+for (i in 1:permutations) {sum(trialdata[i] > escore)}
+sum(sigcount)/permutations
+
+trialdata <- data.frame(
+  trialnum = 1:permutations,
+  maxscore = trialdata)
+
+ggplot(trialdata, aes(x=maxscore)) + geom_histogram()
+abline(v=max(escore))
+```
+
+### 3.1
+
+How does your `max(escore)` compare to the histogram?
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
+### 3.2
+
+Calculate a P-value. To do this, simply quantify the number of random scores $\geq$ to your `max(escore)` value and divide by the number of permutations:
+
+```{r calc-gsea-pval}
+### your code here
+```
+
+A major caveat is that this p-value only has as much resolution as 1 $\div$ the number of permutations. Therefore if your answer above is equivalent to `0`, how would you state the p value for accuracy? (_i.e._ $p < ?$)
+
+<span style="color:#31a354"><i><b>
+answer here
+</b></i></span>
+
