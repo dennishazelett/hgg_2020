@@ -28,12 +28,14 @@ Take some time to review the code below:
 ```{r basemodel, eval=FALSE}
 
 # define parameters:
-cutoff <- 500 # 20 # number of top ranked genes with enrichment
-baseline <- 0.05 # fraction of total genes in pathway of interest
-enrich <- 0.3 # probability of pathway genes in top list
-ngenes <- 1e4 # total number of genes
+ngenes <- 2e4 # total number of genes
+cutoff <- ngenes / 5 # number of top ranked genes with enrichment (default here 1/5 of genes)
+pathway_genes <- 50 # number of genes in pathway
+baseline <- pathway_genes/ngenes # fraction of total genes in pathway of interest
+enrich <- baseline * 3 # probability of pathway genes in top list
 
 # simulate a dataset:
+if (enrich > 1) {warning("total enrichment probability is greater than 100%")}
 if (baseline * cutoff < 1) {print("WARNING: baseline probability is too low")}
 top <- sample(c(rep(0, (1-enrich) * cutoff), rep(1, enrich * cutoff)), size = cutoff, replace = F)
 if (sum(top) <= baseline * ngenes) {
@@ -53,14 +55,15 @@ if (sum(top) <= baseline * ngenes) {
   }
   
   # visualize the results:
-  plot(x=1:ngenes, y=escore, type='l', ylim=c(-cutoff/2, cutoff/2))
+  plot(x=1:ngenes, y=escore, type='l', ylim=c(-max(abs(escore)), max(abs(escore))))
   abline(h=0)
+  points(x = which(as.logical(ranked_list)), y = rep(-max(abs(escore)), sum(ranked_list)))
 } else {print("COULD NOT EVAL: NUM HITS IN TOP LIST GREATER THAN PATHWAY")}
 ```
 
 ### Question 1.1
 
-In your own words, describe how the enrichment function function works (lines 42-43). 
+In your own words, describe how the enrichment function function works (lines 50-53). 
 
 <span style="color:#31a354"><i><b>
 answer here
@@ -94,12 +97,14 @@ Suppose we wanted to add a pvalue calculation using Fisher's exact test, using t
 ```{r pvalues, eval=FALSE}
 
 # define parameters:
-cutoff <- 500 # 20 # number of top ranked genes with enrichment
-baseline <- 0.05 # fraction of total genes in pathway of interest
-enrich <- 0.15 # probability of pathway genes in top list
-ngenes <- 1e4 # total number of genes
+ngenes <- 2e4 # total number of genes
+cutoff <- ngenes / 5 # number of top ranked genes with enrichment (default here 1/5 of genes)
+pathway_genes <- 50 # number of genes in pathway
+baseline <- pathway_genes/ngenes # fraction of total genes in pathway of interest
+enrich <- baseline * 2 # probability of pathway genes in top list
 
 # simulate a dataset:
+if (enrich > 1) {warning("total enrichment probability is greater than 100%")}
 if (baseline * cutoff < 1) {print("WARNING: baseline probability is too low")}
 top <- sample(c(rep(0, (1-enrich) * cutoff), rep(1, enrich * cutoff)), size = cutoff, replace = F)
 if (sum(top) <= baseline * ngenes) {
@@ -138,8 +143,9 @@ if (sum(top) <= baseline * ngenes) {
   }
   
   # visualize the results:
-  plot(x=1:ngenes, y=escore, type='l', ylim=c(-cutoff/2, cutoff/2))
+  plot(x=1:ngenes, y=escore, type='l', ylim=c(-max(abs(escore)), max(abs(escore))))
   abline(h=0)
+  points(x = which(as.logical(ranked_list)), y = rep(-max(abs(escore)), sum(ranked_list)))
 } else {print("COULD NOT EVAL: NUM HITS IN TOP LIST GREATER THAN PATHWAY")}
 ```
 
