@@ -213,7 +213,7 @@ trialdata <- data.frame(
   maxscore = trialdata)
 
 ggplot(trialdata, aes(x=maxscore)) + geom_histogram()
-abline(v=max(escore))
+
 ```
 
 ### 3.1
