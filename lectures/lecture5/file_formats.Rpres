@@ -296,6 +296,18 @@ CIGAR can encode the alignment
 
 SAM / BAM / CRAM
 ========================================================
+MAPQ can encode the Mapping Quality
+
+$-10 log_{10} Pr \{mapping\ position\ is\ wrong\}$
+
+255 indicates no mapping quality is availible
+
+<center>
+![](sam_manditory_fields.png)
+</center>
+
+SAM / BAM / CRAM
+========================================================
 CIGAR can encode the alignment
 
 <center>
