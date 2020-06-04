@@ -317,4 +317,4 @@ There is a concern that duplicates may correspond to biased PCR amplification of
 
 Homework
 ========================================================
-Using the provided pre- and post- alignment metrics, evaluate the sequencing files corresponding to your transcription factor. For each metric, see if you can find a sample that looks as good or better, and another that is worse. Describe how you evaluated "better" or "worse". Given only the quality of the data for your transcription factor, were you to select the same knock down for further analysis, or would you select a different sample?
+Using the provided pre- and post- alignment metrics, evaluate the sequencing files corresponding to your transcription factor. For each metric, see if you can find a sample that looks as good or better, and another that is worse. Describe how you evaluated "better" or "worse". Given only the quality of the data for your transcription factor, would you request a repeat of the experiment if it was in your power to do so?
