@@ -1,0 +1,320 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
+
+Lecture 6: Quality Control & Alignment Basics
+========================================================
+author: 
+date: 06/04/2020
+autosize: true
+transition: fade
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(cache=TRUE, fig.width=12, fig.height=6)
+```
+
+Goals
+========================================================
+
+- Understanding computational context of RNA-Seq
+
+Goals
+========================================================
+
+- Understanding computational context of RNA-Seq
+
+- Learning to judge data for quality metrics of RNA-Seq
+
+Common RNA-Seq Computational Processing
+========================================================
+
+- Alignment
+  - _Tools Like:_
+  - STAR - [github](https://github.com/alexdobin/STAR)
+  - HISAT2 - [link](http://daehwankimlab.github.io/hisat2/)
+  - Bowtie 2 - [link](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+
+
+Common RNA-Seq Computational Processing
+========================================================
+
+- Alignment
+- Mapping
+  - _Tools Like:_
+  - Salmon - [documentation](https://salmon.readthedocs.io/en/latest/index.html)
+  - Kallisto - [documentation](https://pachterlab.github.io/kallisto/starting)
+
+Common RNA-Seq Computational Processing
+========================================================
+
+- Alignment
+- Mapping
+- Counting
+  - _Tools Like:_
+  - featureCounts - [documentation](http://bioinf.wehi.edu.au/featureCounts/)
+  - HTSeq - [documentation](https://htseq.readthedocs.io/en/master/)
+
+
+Alignment
+========================================================
+
+- Requires a genome `.fasta` file & preferably a `.gtf` file containing a comprehensive set of genes
+  - These produce an index
+
+- Requires reads in the form of `.fastq`
+
+- Outputs a `.bam`/`.sam` file indicating where reads are mapped in the genome.
+
+- To be followed up likely by a quantification step.
+
+Alignment
+========================================================
+
+- Input can be single end or paired end reads.
+
+```{r, echo = FALSE, out.height = 500, fig.align = "center"}
+include_graphics("./read_library.png")
+```
+
+
+Alignment
+========================================================
+
+<center>
+![](spliced_unspliced.png)
+</center>
+
+Alignment
+========================================================
+
+- Alignment to the genome
+  - STAR does this, also HISAT2 and Bowtie2
+<center>
+![](STAR.png)
+</center>
+
+Alignment
+========================================================
+
+- Alignment to the genome
+- Alignment to the transcriptome
+  - Rare in the context of true alignment
+  - May be valuable where a quality genome does not exist for your organism
+
+Alignment
+========================================================
+
+- Alignment to the genome
+- Alignment to the transcriptome
+
+<center>
+![](spliced_unspliced.png)
+</center>
+
+
+Counting
+========================================================
+
+Counts represent the number of reads produced by the RNA-Seq experiement that can be assigned to a genomic feature.
+
+They are the measurement that we can use to estimate differential expression.
+
+They can be converted to many different abundance measurements.
+
+Counting
+========================================================
+
+*Counts to abundance:*
+
+A lot more detail *[here](http://robpatro.com/blog/?p=235)*
+
+**CPM = Counts Per Million**
+
+`CPM = (count * 10e6) / total_reads`
+
+**RPKM = Reads Per Kilobase per Million mapped reads** or **FPKM = Fragments Per Kilobase per Million mapped reads**
+
+`RPKM (or FPKM) = (count * 1e3 * 1e6) / (total_reads * gene_length_in_bp)`
+
+**TPM = Transcript Per Million**
+
+`TPM = A * (1 / sum(A)) * 1e6`
+
+`A = count * 1e3 / gene_length_in_bp`
+
+Counting
+========================================================
+
+Considerations:
+
+<center>
+![](counting.png)
+</center>
+
+Counting
+========================================================
+
+Work Around:
+
+<center>
+![](transcript_assignment.pngs)
+</center>
+
+Mapping
+========================================================
+
+- Alternative to alignment + counting
+
+Mapping
+========================================================
+
+- Alternative to alignment
+- Useful for quantifying gene expression of known genes and isoforms
+
+Mapping
+========================================================
+
+- Alternative to alignment
+- Useful for quantifying gene expression of known genes and isoforms
+- Fast and computationally cheap
+- Direct to transcriptome - only as good as your gene models
+
+
+Mapping
+========================================================
+
+Tiny cluster for doing mapping
+
+~ 15million reads on one core in 11 minutes
+
+<center>
+![](mini_cluster.jpeg)
+</center>
+
+Mapping
+========================================================
+
+Get read assignment to genes/transcripts for free
+
+There is no seperate quantification step
+
+
+Mapping
+========================================================
+
+```{r, echo = FALSE, out.height = 600, fig.align = "center"}
+include_graphics("./salmon.jpg")
+```
+
+Mapping
+========================================================
+
+The main tools are salmon and kallisto
+```{r, echo = FALSE, out.height = 500, fig.align = "center"}
+include_graphics(c("./salmon_logo.png", "./kallisto_logo.jpg"))
+```
+
+Mapping
+========================================================
+
+- Requires a transcriptome `.fasta` file & preferably a `.gtf` file containing a comprehensive set of genes
+  - These produce an index
+
+- Requires reads in the form of `.fastq`
+
+- Outputs a table with Transcript IDs, Counts, Transcript Lengths, and TPM values
+
+Mapping
+========================================================
+
+- Outputs a table with Transcript IDs, Counts, Transcript Lengths, and TPM values
+
+| Name  | Length  | EffectiveLength  |  TPM | NumReads  |
+|:-:|:-:|:-:|:-:|:-:|
+| ENST00000456328.2  | 1657  | 1869.277  | 0.000000  |  0.000 |
+| ENST00000488147.1  | 1351  | 1646.916  | 7.718260  |  255.879 |
+
+The effective length is akin to the regular length of each transcript type, except that it accounts for the fact that not every transcript in the population can produce a fragment of every length starting at every position.  Actually, a transcript has an effective length with respect to each possible fragment that maps to it
+
+Quality Control
+========================================================
+
+Should be done both before and after alignment
+
+AKA on the FASTQ files directly and on the resulting BAMS
+
+Quality Control
+========================================================
+
+A lot of quality control becomes clearer in the context of other experiments.
+
+[MultiQC](https://multiqc.info/docs/) facilitates this process with plugins to colate [92 different QC tools](https://multiqc.info/#supported-tools):
+
+<center>
+![](multiqc.png)
+</center>
+
+Quality Control - FASTQ
+========================================================
+
+[*FastQC*](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+
+<center>
+![](fastqc.png)
+</center>
+
+Quality Control - FASTQ
+========================================================
+
+[*FastQ Screen*](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/)
+
+<center>
+![](good_sequence_screen.png)
+
+![](bad_sequence_screen.png)
+</center>
+
+Quality Control - FASTQ
+========================================================
+
+Quality Control - BAMs
+========================================================
+
+![](preseq.png)
+
+[Preseq](http://smithlabresearch.org/software/preseq/) | 
+[featureCounts](http://bioinf.wehi.edu.au/featureCounts/) |
+[Picard](https://broadinstitute.github.io/picard/picard-metric-definitions.html#RnaSeqMetrics) |
+[STAR](https://github.com/alexdobin/STAR)
+
+Quality Control - BAMs
+========================================================
+
+What can we look for specifically?
+- 3’ end bias:
+- rRNA and mtRNA
+- Duplicate Reads / Complexity
+
+3’ end bias
+========================================================
+Can’t really produce a perfectly uniform coverage across entire transcripts.
+Introduced by library construction, especially if starting RNA is degraded, and then subjected to polyA enrichment. 
+
+
+rRNA and mtRNA
+========================================================
+The goal of most RNA-seq studies is to interrogate functional mRNA. However, structure RNAs such as Ribosomal RNA (rRNA), (or tRNAs) can constitute > 50% of total RNA in the cell, soaking up reads and lowering effective depth. These should be depleted in library preparation. 
+
+
+Duplicate Reads
+========================================================
+Two or more reads are assumed to be derived from the same nucleotide fragment and not representing independent transcriptome information from the sample.
+Typically, for paired-end read data (single-end data is also handled) these algorithms find the 5p coordinates and mapping orientations of each read pair while taking into account all clipping that has taking place as well as any gaps or jumps in the alignment. All read pairs sharing identical 5p coordinates and orientations are marked as duplicates except the "best" pair.
+
+There is a concern that duplicates may correspond to biased PCR amplification of particular fragments, however, for highly expressed or short genes, duplicates are expected even if there is no amplification bias. Removing them will reduce the dynamic range of expression estimates. Generally duplicates should therefore not be removed in RNA-seq analysis
+
+Homework
+========================================================
+Using the provided pre- and post- alignment metrics, evaluate the sequencing files corresponding to your transcription factor. For each metric, see if you can find a sample that looks as good or better, and another that is worse. Describe how you evaluated "better" or "worse". Given only the quality of the data for your transcription factor, were you to select the same knock down for further analysis, or would you select a different sample?
