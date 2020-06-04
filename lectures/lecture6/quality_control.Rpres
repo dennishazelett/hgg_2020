@@ -159,7 +159,7 @@ Counting
 Work Around:
 
 <center>
-![](transcript_assignment.pngs)
+![](transcript_assignment.png)
 </center>
 
 Mapping
@@ -212,7 +212,7 @@ Mapping
 ========================================================
 
 The main tools are salmon and kallisto
-```{r, echo = FALSE, out.height = 500, fig.align = "center"}
+```{r, echo = FALSE, out.height = 350, fig.align = "center"}
 include_graphics(c("./salmon_logo.png", "./kallisto_logo.jpg"))
 ```
 
@@ -270,11 +270,10 @@ Quality Control - FASTQ
 
 [*FastQ Screen*](https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/)
 
-<center>
-![](good_sequence_screen.png)
 
-![](bad_sequence_screen.png)
-</center>
+```{r, echo = FALSE, out.height = 300, fig.align = "center"}
+include_graphics(c("./good_sequence_screen.png", "./bad_sequence_screen.png"))
+```
 
 Quality Control - FASTQ
 ========================================================
