@@ -28,7 +28,7 @@ Global overview plot (lecture 1)
 ========================================================
 class: small-code
 
-```{r ordered_crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center', include = FALSE}
+```{r ordered_crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center', echo = FALSE}
 pheatmap(plot_matrix[order(match(rownames(plot_matrix), colnames(plot_matrix))), ], 
          color = viridis(100), 
          cluster_rows = FALSE,
@@ -112,19 +112,16 @@ Enrichment (lecture 4)
 
 We discussed 3 different models for enrichment calculation
 
+- Fisher's exact test
+- $\chi ^ {2}$ (not covered)
+
 Enrichment (lecture 4)
 ========================================================
 
 We discussed 3 different models for enrichment calculation
 
 - Fisher's exact test
-
-Enrichment (lecture 4)
-========================================================
-
-We discussed 3 different models for enrichment calculation
-
-- Fisher's exact test
+- $\chi ^ {2}$ (not covered)
 - Bayesian proportional enrichment
 
 Enrichment (lecture 4)
@@ -166,7 +163,7 @@ Bayesian enrichment w/ two proportions (lecture 4)
 
 Key Assumptions 
 
-- foreground probabilities unknonw
+- foreground probabilities unknown
 - background probabilities unknown
 - sample available for both
 - beta distribution applies ( _i.i.d._ )
@@ -201,15 +198,15 @@ Identify on sight:
 File Formats (lecture 5)
 ========================================================
 
-What is the purpose of
-
-- SAM, BAM, CRAM
-- CIGAR
+Be able to answer questions about a FASTQ file similar to what was in the homework!
 
 File Formats (lecture 5)
 ========================================================
 
-Be able to answer questions about a FASTQ file similar to what was in the homework!
+What is the purpose of
+
+- SAM, BAM, CRAM
+- CIGAR
 
 Quality control (lecture 6)
 ========================================================
@@ -226,3 +223,26 @@ Quality control (lecture 6)
 
 Be able to discuss complexity, and backup statements about a sample's complexity by referring to MultiQC graphics
 
+The Final Exam
+========================================================
+
+- 30 / 100 points
+- 6 - 10 questions
+- 2 hrs
+- open book / open notes
+- based on homework
+
+A final note
+========================================================
+
+Thank you!
+
+![](FeedsSpeedsPorridge.jpg)
+
+A (final) final note
+========================================================
+
+Check this out: [Modern Statistics for Modern Biology](http://web.stanford.edu/class/bios221/book/)
+by **Susan Holmes** and **Wolfgang Huber**
+
+![](MSFMB-Cover2-compressed.jpg)
