@@ -1,0 +1,248 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+
+.smaller-code pre code {
+  font-size: 14px;
+}
+
+</style>
+
+Review of the Bioinformatics module of Human Genetics & Genomics
+========================================================
+author: Dennis Hazelett
+date: June 9th, 2020
+autosize: true
+transition: concave
+
+```{r setup, include=FALSE}
+opts_chunk$set(cache=TRUE)
+library(DESeq2)
+library(pheatmap)
+library(viridis)
+load("~/repos/hgg_2020/data/plot_matrix.Rda")
+```
+
+Global overview plot (lecture 1)
+========================================================
+class: small-code
+
+```{r ordered_crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center', echo = FALSE}
+pheatmap(plot_matrix[order(match(rownames(plot_matrix), colnames(plot_matrix))), ], 
+         color = viridis(100), 
+         cluster_rows = FALSE,
+         cluster_cols = FALSE,
+         scale = "row")
+```
+
+- visualization as an aid for diagnostics
+- data selection and curation for GENAVi
+
+RNA-seq: Workflows (lecture 2)
+========================================================
+
+![](~/repos/hgg_2020/lectures/lecture2/RNAseq-workflow.png)
+
+RNA-seq: Workflows (lecture 2)
+========================================================
+Remember and understand:
+
+- what is the purpose of normalization?
+- under what circumstances is it relevant to RNA-seq analysis?
+- what is the difference between statistical inference and statistical modeling?
+
+RNA-seq: Workflows (lecture 2)
+========================================================
+What are the common normalization methods?
+
+- Counts per million (CPM)
+- Trimmed mean of M-values (TMM/edgeR)
+- RPKM _vs._ FPKM
+- Transcripts per million (TPM - Salmon)
+
+GENAVi (lecture 2)
+========================================================
+
+Steps:
+- visualize
+- choose a model
+- differential analysis
+- PCA (week 2)
+
+Distributions (lecture 3)
+========================================================
+What are the ways that count data can be modeled?
+
+Distributions (lecture 3)
+========================================================
+What are the ways that count data can be modeled?
+
+- binomial vs. negative binomial?
+
+Distributions (lecture 3)
+========================================================
+What are the ways that count data can be modeled?
+
+- binomial vs. negative binomial?
+- How does DESeq2 model count data?
+
+PCA and t-SNE methods (lecture 3)
+========================================================
+
+- What is PCA?
+
+PCA and t-SNE methods (lecture 3)
+========================================================
+
+- How many dimensions in PC analysis?
+
+PCA and t-SNE methods (lecture 3)
+========================================================
+
+- How does t-SNE differ?
+
+Enrichment (lecture 4)
+========================================================
+
+We discussed 3 different models for enrichment calculation
+
+Enrichment (lecture 4)
+========================================================
+
+We discussed 3 different models for enrichment calculation
+
+- Fisher's exact test
+- $\chi ^ {2}$ (not covered)
+
+Enrichment (lecture 4)
+========================================================
+
+We discussed 3 different models for enrichment calculation
+
+- Fisher's exact test
+- $\chi ^ {2}$ (not covered)
+- Bayesian proportional enrichment
+
+Enrichment (lecture 4)
+========================================================
+
+We discussed 3 different models for enrichment calculation
+
+- Fisher's exact test
+- $\chi ^ {2}$ (not covered)
+- Bayesian proportional enrichment
+- Enrichment in a ranked list
+
+Fisher's exact test (lecture 4)
+========================================================
+
+Key assumptions:
+
+- finite population (exact probability known)
+- sampling **without replacement**
+- special case of binomial CDF
+
+Fisher's exact test (lecture 4)
+========================================================
+
+How to do it (black and white marbles problem)
+
+- `phyper()`
+- `q = q - 1`
+- `lower.tail = FALSE`
+- `logp = TRUE`
+
+Fisher's exact test (lecture 4)
+========================================================
+
+What kinds of biological/genomics problems does it apply to?
+
+Bayesian enrichment w/ two proportions (lecture 4)
+========================================================
+
+Key Assumptions 
+
+- foreground probabilities unknown
+- background probabilities unknown
+- sample available for both
+- beta distribution applies ( _i.i.d._ )
+
+Bayesian enrichment w/ two proportions (lecture 4)
+========================================================
+
+What kinds of biological/genomics problems does it apply to?
+
+Enrichment in a ranked list (lecture 4)
+========================================================
+
+<img src="gsea_curve.png", style="width:700px;height:400px;"></img>
+
+Enrichment in a ranked list (lecture 4)
+========================================================
+
+- evaluate and interpret a GSEA curve
+- know how the p-values are generated
+
+File Formats (lecture 5)
+========================================================
+
+Identify on sight:
+
+- FASTA
+- FASTQ
+- GTF
+- BED
+- VCF
+
+File Formats (lecture 5)
+========================================================
+
+Be able to answer questions about a FASTQ file similar to what was in the homework!
+
+File Formats (lecture 5)
+========================================================
+
+What is the purpose of
+
+- SAM, BAM, CRAM
+- CIGAR
+
+Quality control (lecture 6)
+========================================================
+
+Be able to navigate a MultiQC `html` file and interpret in response to questions
+
+Quality control (lecture 6)
+========================================================
+
+Be able to interpret what pipeline was used by examining a MultiQC `html` file
+
+Quality control (lecture 6)
+========================================================
+
+Be able to discuss complexity, and backup statements about a sample's complexity by referring to MultiQC graphics
+
+The Final Exam
+========================================================
+
+- 30 / 100 points
+- 6 - 10 questions
+- 2 hrs
+- open book / open notes
+- based on homework
+
+A final note
+========================================================
+
+Thank you!
+
+![](FeedsSpeedsPorridge.jpg)
+
+A (final) final note
+========================================================
+
+Check this out: [Modern Statistics for Modern Biology](http://web.stanford.edu/class/bios221/book/)
+by **Susan Holmes** and **Wolfgang Huber**
+
+![](MSFMB-Cover2-compressed.jpg)

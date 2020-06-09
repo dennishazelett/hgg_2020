@@ -2,6 +2,11 @@
 .small-code pre code {
   font-size: 1em;
 }
+
+.smaller-code pre code {
+  font-size: 14px;
+}
+
 </style>
 
 Lecture 1 Course Overview & GENAVi
@@ -151,12 +156,15 @@ Includes:
 
 Let's look at some data
 ========================================================
+class: small-code
+
 ```{r unique-tfs, echo=TRUE}
 unique(replicate_model$treatment)
 ```
 
 Global overview
 ========================================================
+class: smaller-code
 
 ```{r clustered-crispri, echo=FALSE}
 setwd('~/repos/hgg_2020/')
@@ -174,10 +182,12 @@ plot_matrix <- assay(cfc_de_vsd)[names(cfc_de_vsd) %in% replicate_model$crispri_
 colnames(plot_matrix) <- replicate_model[colnames(plot_matrix), ]$treatment
 rownames(plot_matrix) <- replicate_model[match(rownames(plot_matrix), replicate_model$crispri_geneid), ]$treatment
 plot_matrix[1:10, 1:10]
+save(plot_matrix, file = file.path("~/repos/hgg_2020/data/plot_matrix.Rda"))
 ```
 
 Global overview plot
 ========================================================
+class: small-code
 
 ```{r clustered-crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center'}
 pheatmap(plot_matrix, 
@@ -189,6 +199,7 @@ pheatmap(plot_matrix,
 
 Ordered TFs
 ========================================================
+class: small-code
 
 ```{r ordered_crispri-plot, fig.ext = "png", out.width = '90%', fig.width = 20, fig.asp = 2/5, fig.align = 'center'}
 pheatmap(plot_matrix[order(match(rownames(plot_matrix), colnames(plot_matrix))), ], 
