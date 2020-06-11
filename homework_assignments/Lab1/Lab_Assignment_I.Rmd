@@ -35,7 +35,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
      install.packages("BiocManager")
 BiocManager::install(version = "3.11")
 
-pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph', 'shinyjs', 'shinydashboard', 'devtools', 'DT', "shinyAce", 'V8', 'org.Hs.eg.db', 'Runit')
+pkgs <- c('DESeq2', 'edgeR', 'DOSE', 'apeglm', 'clusterProfiler', 'enrichplot', 'TTR', 'showimage', 'fontBitStreamVera', 'fontLiberation', 'e1071', 'rlist', 'zoo', 'xts', 'quantmod', 'igraph', 'irlba', 'RcppArmadillo', 'reliaR', 'reshape', 'debugme', 'parsedated', 'pingr', 'webdriver', 'diffobj', 'fontquiver', 'freetypeharfbuzz', 'classInt', 'units', 'repr', 'ggdendro', 'fastcluster', 'webshot', 'shinydashboardPlus', 'bs4Dash', 'argonR', 'argonDash', 'tablerDash', 'highcharter', 'truncnorm', 'mixsqp', 'SQUAREM', 'etrunct', 'invgamma', 'REBayes', 'hexbin', 'maps', 'GGally', 'shinytest', 'vdiffr', 'Cairo', 'listviewer', 'dendextend', 'sf', 'maptools', 'rgeos', 'IRdisplay', 'plotlyGeoAssets', 'iheatmapr', 'shinythemes', 'shinyBS', 'shinycssloaders', 'shinyWidgets', 'prettydoc', 'msigdbr', 'shinyjqui', 'ashr', 'plotly', 'affyio', 'preprocessCore', 'numDeriv', 'bdsmatrix', 'mvtnorm', 'triebeard', 'tweenr', 'polyclip', 'annotate', 'affy', 'slam', 'lpsymphony', 'fdrtool', 'Rhdf5lib', 'fastmatch', 'coda', 'bbmle', 'interactiveDisplayBase', 'reactome.db', 'graphite', 'urltools', 'gridGraphics', 'ggforce', 'ggrepel', 'tidygraph', 'graphlayouts', 'genefilter', 'locfit', 'geneplotter', 'vsn', 'IHW', 'tximport', 'tximportData', 'airway', 'pasilla', 'limma', 'rhdf5', 'DO.db', 'fgsea', 'GSEABase', 'GOSemSim', 'qvalue', 'emdbook', 'RcppNumerical', 'rvcheck', 'AnnotationHub', 'KEGG.db', 'ReactomePA', 'cowplot', 'europepmc', 'ggplotify', 'ggraph', 'shinyjs', 'shinydashboard', 'devtools', 'DT', 'shinyAce', 'V8', 'org.Hs.eg.db', 'Runit')
 
 BiocManager::install(pkgs, ask = FALSE, checkBuilt = TRUE)
 ```
@@ -124,39 +124,45 @@ d. (hard) Are there designs that could effectively address/accomodate different 
 5. Filter your data in R using this code chunk as a guide:
 
 ```{r filter-data, echo=TRUE}
-tead.metadat <- rbind(
-  subset(metadat, treatment == 'TEAD2'),
+
+genesymbol <- 'NSD2'
+genebatch <- metadat$batch[metadat$treatment==genesymbol][1]
+
+gene.metadat <- rbind(
+  subset(
+    subset(metadat, treatment == genesymbol),
+    batch == genebatch),
   subset(
     subset(metadat, treatment == 'CRISPRi_CONTROL'),
-    batch %in% c(4, 5))
+    batch == genebatch)
   )
 
-tead.samples <- tead.metadat$samples
+gene.samples <- gene.metadat$samples
 
 ## Now we read in the data from feature counts file
-cts <- read.csv(
-  file = file.path(course_directory, 'data', 'combinedfeatcounts.csv'), 
-  header = TRUE,
-  stringsAsFactors = FALSE)
+# cts <- read.csv(
+#   file = file.path(course_directory, 'data', 'combinedfeatcounts.csv'), 
+#   header = TRUE,
+#   stringsAsFactors = FALSE)
 ## Take a quick peek at the contents
-knitr::kable(cts[1:5, 1:4])
+# knitr::kable(cts[1:5, 1:4])
 
 ## We need to select the columns from our tead.samples, including the Geneid column:
 
-tead.counts <- cts[, c("Geneid", tead.samples)]
+gene.counts <- subset(cts, select = c("Geneid", gene.samples))
 
 ## Now we're ready to export these object for upload to GENAVi
 write.table(
-  tead.counts, 
-  file = file.path(course_directory, 'data', 'teadfeatcounts.csv'),
+  gene.counts, 
+  file = file.path(course_directory, 'data', paste(genesymbol, 'featcounts.csv', sep = '')),#'teadfeatcounts.csv'),
   row.names = FALSE,
   quote = FALSE,
   sep = ','
 )
 
 write.table(
-  tead.metadat,
-  file = file.path(course_directory, 'data', 'teadmodel.csv'),
+  gene.metadat,
+  file = file.path(course_directory, 'data', paste(genesymbol, 'model.csv', sep = '')),#'teadmodel.csv'),
   row.names = FALSE,
   quote = FALSE,
   sep = ','
