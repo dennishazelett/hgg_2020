@@ -111,7 +111,7 @@ quantile(treatment_vs_control, p=c(0.0275, 0.975))
 <span style="color:red">This result can be interpreted as meaning that expression of TEAD 2 changed by as little as 7 tenths of a percent and as much as 8 tenths of a percent of Actin B expression levels in treatment <i>vs.</i> control.</span>
 </span>
 
-```{r question1-hist, results=TRUE}
+```{r question1-hist, echo=FALSE, message=FALSE, warning=FALSE, results=TRUE}
 hist(c(2, 0.5, 1, 2, 1, 1, 1, 1), main="student scores (out of 3)", xlab="points", breaks = c(-1.5, -0.5, 0.5, 1.5, 2.5, 3.5))
 ```
 
@@ -313,7 +313,7 @@ You are performing RNA-seq analysis on highly rearranged tumors that may have ma
 
 <span style="color:#31a354">Enter your answers here.</span>
 
-<span style="color:red">Full credit was given for alignment + counting, explaining lack of <i>a priori</i> gene models, better understanding of alternative splicing, better detection of fusion genes due to genomic alignment. Partial credit was given for choosing mapping if you could rationalize those biases against speed. Did you discuss the pitfalls in the context of mapping against a known transcriptome when tumors are rearranged. 2 points for choosing mapping, 3 points for accurately justifying either.</span>
+<span style="color:red">Full credit was given for alignment + counting, explaining lack of <i>a priori</i> gene models, better understanding of alternative splicing, better detection of fusion genes due to genomic alignment. Partial credit was given for choosing mapping if you could rationalize those biases against speed. Did you discuss the pitfalls in the context of mapping against a known transcriptome when tumors are rearranged. 2 points for choosing alignment, 3 points for accurately justifying either.</span>
 
 
 ```{r question6-hist, echo=FALSE, message=FALSE, warning=FALSE, results=TRUE}
